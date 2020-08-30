@@ -80,6 +80,7 @@ class Utils:
                 if not os.path.exists(path):
                     self.sprint(f"Could NOT create directory [{path}]", 'e')
                     sys.exit(-1)
+            self.sprint("Directory created successfully!!", 'o')
         else:
             # Path already exist
             self.sprint("Path already exists", 'o')

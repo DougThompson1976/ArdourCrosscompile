@@ -51,7 +51,7 @@ class Indents:
 class Utils:
     def __init__(self, main):
         self.main = main
-        self.ROOT = os.path.dirname(os.path.abspath(__file__))
+        self.ROOT = os.path.dirname(os.path.abspath(__file__)) + "/"
     
     # (S)tyled (print) with indents
     def sprint(self, text, style="info"):

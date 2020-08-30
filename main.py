@@ -23,6 +23,8 @@ SOFTWARE.
 """
 
 from directories import Directories
+from download import Download
+from actions import Actions
 from utils import Utils
 
 
@@ -30,6 +32,8 @@ class Main:
     def __init__(self):
         self.utils = Utils(self)
         self.directories = Directories(self)
-        self.utils.mkdir_dne(self.directories.workspace)
+        self.download = Download(self)
+        self.actions = Actions(self)
 
+        self.actions.run()
 Main()

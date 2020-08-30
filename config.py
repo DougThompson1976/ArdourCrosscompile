@@ -22,10 +22,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-class Directories:
-    def __init__(self, main):
-        self.main = main
-
-        self.workspace = self.main.utils.ROOT + "workspace/"
-
-        self.ardour = self.workspace + "ardour/"
+CLONE_ARDOUR = True
+PULL_ARDOUR = False

@@ -30,16 +30,18 @@ import os
 cprint = neotermcolor.cprint
 
 # Set neotermcolor styles
-neotermcolor.set_style('e', color='red',    attrs='bold') # Error
-neotermcolor.set_style('w', color='yellow', attrs='bold') # Warning
-neotermcolor.set_style('i', color='white',  attrs='bold') # Info
-neotermcolor.set_style('q', color='yellow', attrs='bold') # Question
-neotermcolor.set_style('c', color='blue',   attrs='bold') # Check
-neotermcolor.set_style('o', color='green',  attrs='bold') # Ok
+neotermcolor.set_style('a', color='magenta', attrs='bold') # Action
+neotermcolor.set_style('e', color='red',     attrs='bold') # Error
+neotermcolor.set_style('w', color='yellow',  attrs='bold') # Warning
+neotermcolor.set_style('i', color='cyan',    attrs='bold') # Info
+neotermcolor.set_style('q', color='yellow',  attrs='bold') # Question
+neotermcolor.set_style('c', color='blue',    attrs='bold') # Check
+neotermcolor.set_style('o', color='green',   attrs='bold') # Ok
 
 
 # Intents for printing pretty stuff
 class Indents:
+    ACTION =   "  >> text"
     ERROR =    "[## ERROR ##] text"
     WARNING =  "[WARNING] :: text"
     INFO =     "[INFO] text"
@@ -58,6 +60,7 @@ class Utils:
     def sprint(self, text, style="info"):
         # Defaults and indents
         indent = {
+            "a": Indents.ACTION,
             "e": Indents.ERROR,
             "w": Indents.WARNING,
             "q": Indents.QUESTION,
@@ -117,3 +120,4 @@ class Utils:
         with open(path, "w") as f:
             for line in data:
                 f.write(line)
+

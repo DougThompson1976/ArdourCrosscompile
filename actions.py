@@ -22,10 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-class Directories:
+from config import *
+
+class Actions:
     def __init__(self, main):
         self.main = main
 
-        self.workspace = self.main.utils.ROOT + "workspace/"
-
-        self.ardour = self.workspace + "ardour/"
+    def run(self):
+        if CLONE_ARDOUR:
+            self.main.utils.sprint("CLONE_ARDOUR", 'a')
+            self.main.download.git_clone("https://github.com/Ardour/ardour", self.main.directories.ardour)

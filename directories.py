@@ -22,14 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from directories import Directories
-from utils import Utils
+class Directories:
+    def __init__(self, main):
+        self.main = main
 
-
-class Main:
-    def __init__(self):
-        self.utils = Utils(self)
-        self.directories = Directories(self)
-        self.utils.mkdir_dne(self.directories.workspace)
-
-Main()
+        self.workspace = self.main.utils.ROOT + "workspace/"

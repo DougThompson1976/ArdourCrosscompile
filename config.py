@@ -24,3 +24,9 @@ SOFTWARE.
 
 CLONE_ARDOUR = True
 PULL_ARDOUR = False
+
+CHECK_NEEDED_PACKAGES = True
+
+# Fixes on ardour scripts
+FIX_CREATE_HARD_LINK_A = True
+FIX_FFTW = True

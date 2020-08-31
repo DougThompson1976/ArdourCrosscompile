@@ -22,21 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from directories import Directories
-from download import Download
-from actions import Actions
-from pacman import Pacman
-from utils import Utils
+import subprocess
 
 
-class Main:
-    def __init__(self):
-        self.utils = Utils(self)
-        self.pacman = Pacman(self)
-        self.directories = Directories(self)
-        self.download = Download(self)
-        self.actions = Actions(self)
+class Pacman:
+    def __init__(self, main):
+        self.main = main
 
+    def get_installed_packages(self):
+        self.main.utils.sprint(f"Getting installed packages", 'c')
+        
+        # Pacman -Q to query, q to only show name, not version, decode the output and split on lines
+        self.installed = subprocess.check_output(['pacman', '-Qq']).decode("utf-8").split("\n")
 
-        self.actions.run()
-Main()
+        self.main.utils.sprint(f"Got installed packages, len=({len(self.installed)})", 'o')

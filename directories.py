@@ -27,5 +27,7 @@ class Directories:
         self.main = main
 
         self.workspace = self.main.utils.ROOT + "workspace/"
-
+        self.runtime = self.workspace + "runtime/"
         self.ardour = self.workspace + "ardour/"
+
+        # Runtime

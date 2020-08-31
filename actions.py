@@ -32,3 +32,29 @@ class Actions:
         if CLONE_ARDOUR:
             self.main.utils.sprint("CLONE_ARDOUR", 'a')
             self.main.download.git_clone("https://github.com/Ardour/ardour", self.main.directories.ardour)
+        
+        if PULL_ARDOUR:
+            self.main.utils.sprint("PULL_ARDOUR", 'a')
+            raise NotImplementedError
+
+        if CHECK_NEEDED_PACKAGES:
+            self.main.utils.sprint("CHECK_NEEDED_PACKAGES", 'a')
+            self.main.pacman.get_installed_packages()
+
+        if FIX_CREATE_HARD_LINK_A:
+            self.main.utils.sprint("FIX_CREATE_HARD_LINK_A", 'a')
+            # Mingw can't seem to find this
+            self.main.utils.sed_replace(
+                "return CreateHardLinkA (new_path.c_str(), existing_file.c_str(), NULL);",
+                "return false;",
+                self.main.directories.ardour + "/libs/pbd/file_utils.cc"
+            )
+        
+        if FIX_FFTW:
+            self.main.utils.sprint("FIX_FFTW", 'a')
+            # FFTW threads can't be imported with -lfftw3_threads
+            self.main.utils.sed_replace(
+                "fftwf_make_planner_thread_safe ();",
+                "void fftwf_make_planner_thread_safe ();",
+                self.main.directories.ardour + "/libs/pbd/file_utils.cc"
+            )

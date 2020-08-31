@@ -26,6 +26,9 @@ from git import Repo, RemoteProgress
 from tqdm import tqdm
 import time
 import wget
+import git
+import sys
+import os
 
 
 class Download:
@@ -33,12 +36,24 @@ class Download:
         self.main = main
 
     def git_clone(self, url, save):
+        # For getting the repo name, if it ends on / we can't
+        # split and get the last split of "/" o we shorten it by one
         if url.endswith("/"):
             url = url[0:-1]
+
         self.repo_name = url.split("/")[-1]
         self.main.utils.sprint(f"Clone repo [{self.repo_name}] from url [{url}] saving to [{save}]", 'i')
-        Repo.clone_from(url, save, progress=self.git_clone_progress_bar)
-
+        try:
+            Repo.clone_from(url, save, progress=self.git_clone_progress_bar)
+            print()
+        except git.exc.GitCommandError:
+            self.main.utils.sprint(f"Could not clone repo", 'e')
+            if os.path.exists(save):
+                self.main.utils.sprint(f"Repo folder already exists, continuing (consider deleting it if something goes wrong)", 'w')
+            else:
+                self.main.utils.sprint(f"Repo folder doesn't exist and can't clone", 'f')
+                sys.exit(-1)
+        
     def git_clone_progress_bar(self, _, current, total, speed):
         percentage = (current/total)*100
         print(f"\r Cloning repo [{self.repo_name}] | {percentage:0.2f}% | {speed}", end='', flush=True)
@@ -65,3 +80,4 @@ class Download:
         self.start = time.time()
         self.main.utils.sprint(f"Get file from URL [{url}] saving to [{save}]", 'i')
         wget.download(url, save, bar=self.wget_progress_bar)
+        print()

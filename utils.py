@@ -41,7 +41,7 @@ neotermcolor.set_style('o', color='green',   attrs='bold') # Ok
 
 # Intents for printing pretty stuff
 class Indents:
-    ACTION =   "  >> text"
+    ACTION =   "\n\n  >> text\n"
     ERROR =    "[## ERROR ##] text"
     WARNING =  "[WARNING] :: text"
     INFO =     "[INFO] text"
@@ -109,6 +109,9 @@ class Utils:
 
     # Same as `sed -i "s/old/new/g" path`
     def sed_replace(self, old, new, path):
+
+        self.sprint(f"Replacing [{old}] --> [{new}] on file [{path}]", 'i')
+        
         # Read every line of original file
         with open(path, "r") as f:
             data = [line for line in f]

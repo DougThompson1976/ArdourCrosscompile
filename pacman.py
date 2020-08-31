@@ -24,11 +24,39 @@ SOFTWARE.
 
 import subprocess
 
+class Requirements:
+    def __init__(self, main):
+        self.main = main
+
+        self.requirements = [
+            # mingw-w64-toolchain group
+            "binutils",
+            "crt",
+            "gcc",
+            "headers",
+            "winpthreads",
+        ]
+
+        self.requirements = {f"mingw-w64-{name}": False for name in self.requirements}
+
+    def check_installed(self):
+        self.main.utils.sprint(f"Checking already installed packages from requirements", 'i')
+
+        for pkgname in self.requirements.keys():
+            self.requirements[pkgname] = self.main.pacman.is_package_installed(pkgname)
+
+        # Get number of installed packages and needed
+        installed = sum(self.requirements.values())
+        needed = len(self.requirements.keys()) - installed
+
+        self.main.utils.sprint(f"Status of packages: installed [{installed}], missing [{needed}]", 'i')
 
 class Pacman:
     def __init__(self, main):
         self.main = main
+        self.requirements = Requirements(self.main)
 
+    # `pacman -Qq` --> Python list
     def get_installed_packages(self):
         self.main.utils.sprint(f"Getting installed packages", 'c')
         
@@ -36,3 +64,16 @@ class Pacman:
         self.installed = subprocess.check_output(['pacman', '-Qq']).decode("utf-8").split("\n")
 
         self.main.utils.sprint(f"Got installed packages, len=({len(self.installed)})", 'o')
+
+    # Is this package listed on installed packages on pacman?
+    def is_package_installed(self, name):
+        self.main.utils.sprint(f"Checking if package is installed [{name}]", 'c')
+        
+        exists = name in self.installed
+
+        if exists:
+            self.main.utils.sprint(f"Yes", 'o')
+            return True
+        else:
+            self.main.utils.sprint(f"No", 'w')
+            return False

@@ -40,6 +40,7 @@ class Actions:
         if CHECK_NEEDED_PACKAGES:
             self.main.utils.sprint("CHECK_NEEDED_PACKAGES", 'a')
             self.main.pacman.get_installed_packages()
+            self.main.pacman.requirements.check_installed()
 
         if FIX_CREATE_HARD_LINK_A:
             self.main.utils.sprint("FIX_CREATE_HARD_LINK_A", 'a')

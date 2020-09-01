@@ -35,6 +35,10 @@ class Requirements:
             "gcc",
             "headers",
             "winpthreads",
+
+            # Special ones that either AUR broken, need manual installing
+            "gtk2",
+            "aubio", # Aubio will always be missing here
         ]
 
         self.requirements = {f"mingw-w64-{name}": False for name in self.requirements}

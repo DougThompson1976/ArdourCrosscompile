@@ -29,33 +29,59 @@ class Actions:
         self.main = main
 
     def run(self):
+
+        # Clone the repository of ardour
         if CLONE_ARDOUR:
             self.main.utils.sprint("CLONE_ARDOUR", 'a')
             self.main.download.git_clone("https://github.com/Ardour/ardour", self.main.directories.ardour)
         
+        # Pull latest commit (not really good because we change some files and be on a detached head mode, it's better just deleting the ardour repo source code and cloning again)
         if PULL_ARDOUR:
             self.main.utils.sprint("PULL_ARDOUR", 'a')
             raise NotImplementedError
+    
+        # Get installed packages
+        self.main.pacman.get_installed_packages()
 
+        # Get a list of installed packages
         if CHECK_NEEDED_PACKAGES:
             self.main.utils.sprint("CHECK_NEEDED_PACKAGES", 'a')
-            self.main.pacman.get_installed_packages()
             self.main.pacman.requirements.check_installed()
 
+        # Fix undefined reference on mingw, things seem not to blow if we just return false
         if FIX_CREATE_HARD_LINK_A:
             self.main.utils.sprint("FIX_CREATE_HARD_LINK_A", 'a')
-            # Mingw can't seem to find this
             self.main.utils.sed_replace(
                 "return CreateHardLinkA (new_path.c_str(), existing_file.c_str(), NULL);",
                 "return false;",
                 self.main.directories.ardour + "/libs/pbd/file_utils.cc"
             )
         
+        # FFTW threads can't be imported with -lfftw3_threads
         if FIX_FFTW:
             self.main.utils.sprint("FIX_FFTW", 'a')
-            # FFTW threads can't be imported with -lfftw3_threads
             self.main.utils.sed_replace(
                 "fftwf_make_planner_thread_safe ();",
                 "void fftwf_make_planner_thread_safe ();",
                 self.main.directories.ardour + "/libs/pbd/file_utils.cc"
+            )
+
+        # mingw prefix
+        mingw_pfx = "i686-w64-mingw32"
+
+        # Compile for x86_64 (64 bit)
+        if XARCH_X86_64:
+
+            mingw_pfx = "x86_64-w64-mingw32"
+
+            self.main.utils.sprint("SET XARCH to x86_64", 'a')
+            self.main.utils.sed_replace(
+                ": ${XARCH=i686}",
+                ": ${XARCH=x86_64}",
+                self.main.directories.ardour + "/tools/x-win/compile.sh"
+            )
+            self.main.utils.sed_replace(
+                ": ${XARCH=i686}",
+                ": ${XARCH=x86_64}",
+                self.main.directories.ardour + "/tools/x-win/package.sh"
             )

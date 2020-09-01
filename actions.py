@@ -56,9 +56,18 @@ class Actions:
                 "return false;",
                 self.main.directories.ardour + "/libs/pbd/file_utils.cc"
             )
+
+        # Add to LDFLAGS
+        if FIX_LD_FLAG_FFTW:
+            self.main.utils.sprint("FIX_LD_FLAG_FFTW", 'a')
+            self.main.utils.sed_replace(
+                "LDFLAGS=\"-L${PREFIX}/lib\" \\",
+                "LDFLAGS=\"-L${PREFIX}/lib -lfftw3 -lfftw3f\" \\",
+                self.main.directories.ardour + "/libs/pbd/file_utils.cc"
+            )
         
         # FFTW threads can't be imported with -lfftw3_threads
-        if FIX_FFTW:
+        if FIX_FFTW_FFTWF_MAKE_PLANNER_THREAD_SAFE:
             self.main.utils.sprint("FIX_FFTW", 'a')
             self.main.utils.sed_replace(
                 "fftwf_make_planner_thread_safe ();",

@@ -103,19 +103,43 @@ class Actions:
                 self.main.directories.ardour + "/tools/x-win/compile.sh"
             )
             
+        # Get mingw binaries filenames
         pkgconfig = mingw_pfx + "-pkg-config"
         mingw_gcc = mingw_pfx + "-gcc"
-        mingw_gpp = mingw_pfx + "-gpp"
+        mingw_gpp = mingw_pfx + "-g++"
         mingw_ld =  mingw_pfx + "-ld"
+
+
+        # Doesn't really work, TODO
+        if INSTALL_MINGW_JACK:
+
+            raise RuntimeError("Mingw Jack is finicky, prefer not to")
+
+            self.main.utils.sprint("INSTALL_MINGW_JACK", 'a')
+            
+            jack2_repo_path = self.main.directories.workspace + "jack_mingw"
+            self.main.download.git_clone("https://github.com/jackaudio/jack2", jack2_repo_path)
+
+            cmd = (
+                f"cd \"{jack2_repo_path}\" && "
+                f"IS_WINDOWS=true LD=/usr/bin/{mingw_ld} CC=/usr/bin/{mingw_gcc} CXX=/usr/bin/{mingw_gpp} PKGCONFIG=/usr/bin/{pkgconfig} ./waf configure && "
+                "./waf build"
+            )
+            
+            self.main.utils.sprint(f"Running command [{cmd}]", 'i')
+            os.system(cmd)
 
 
         if INSTALL_AUBIO:
             self.main.utils.sprint("INSTALL_AUBIO", 'a')
 
-            aubio_source_code = self.main.directories.workspace + "aubio-0.4.8.zip"
+            # This was the latest version I could compile successfully
+            version = "0.4.8"
+
+            aubio_source_code = self.main.directories.workspace + f"aubio-{version}.zip"
             
             self.main.download.wget(
-                url = "https://github.com/aubio/aubio/archive/0.4.8.zip",
+                url = f"https://github.com/aubio/aubio/archive/{version}.zip",
                 save = aubio_source_code,
                 name = "Aubio Source Code",
             )
@@ -124,14 +148,32 @@ class Actions:
                 self.main.directories.workspace
             )
 
-            os.system((
-                f"cd \"{self.main.directories.workspace}aubio-0.4.8 &&"
-                f"LD=/usr/bin/{mingw_ld} CC=/usr/bin/{mingw_gcc} PKGCONFIG=/usr/bin/{pkgconfig} waf configure &&"
-                "waf build &&"
+            # Need Python2 on this version of aubios
+            self.main.utils.sed_replace(
+                "  ./waf", # We add trailing spaces as if we run the program again and re-overwrite
+                "  python2 ./waf",
+                self.main.directories.workspace + f"aubio-{version}/scripts/build_mingw"
+            )
+
+            self.main.utils.sed_replace(
+                "WAFCMD=python waf", # We add trailing spaces as if we run the program again and re-overwrite
+                "WAFCMD=python2 waf",
+                self.main.directories.workspace + f"aubio-{version}/Makefile"
+            )
+
+            # Build aubio
+            cmd = (
+                f"cd \"{self.main.directories.workspace}aubio-{version}\" && "
+                "chmod +x scripts/* && " # Mark scripts as executable
+                "bash scripts/build_mingw"
+            )
+            self.main.utils.sprint(f"Running command [{cmd}]", 'i')
+            os.system(cmd)
+
                 # f"sudo cp \"{self.main.directories.workspace}aubio-0.4.8/build/src/libaubio.so\" /usr/{mingw_pfx}/"
-            ))
 
 
+        exit()
         # Fix undefined reference on mingw, things seem not to blow if we just return false
         if FIX_CREATE_HARD_LINK_A:
             self.main.utils.sprint("FIX_CREATE_HARD_LINK_A", 'a')

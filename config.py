@@ -40,7 +40,8 @@ CHECK_NEEDED_PACKAGES = True
 INSTALL_AUR_PACKAGES = True
 
 # "Manual" installed package
-INSTALL_AUBIO = False  # Their website expired certificates
+INSTALL_MINGW_JACK = False
+INSTALL_AUBIO = True  # Their website expired certificates
 
 # Fixes on Ardour scripts
 
@@ -51,7 +52,12 @@ FIX_FFTW_FFTWF_MAKE_PLANNER_THREAD_SAFE = True
 # 
 
 XARCH_X86_64 = True  # Compile for Windows 64 bit
-AUDIO_BACKENDS = "portaudio"
+
+if INSTALL_MINGW_JACK:
+    AUDIO_BACKENDS = "portaudio,jack,dummy"
+else:
+    AUDIO_BACKENDS = "portaudio,dummy"
+
 OPTIMIZED = True  # Build a optimized executable of Ardour
 
 

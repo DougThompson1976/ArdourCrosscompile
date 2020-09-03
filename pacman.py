@@ -65,6 +65,9 @@ class Requirements:
             "texinfo":                          default,
             "which":                            default,
 
+            # Others we might need
+            "python":                           default,
+            "python2":                          default,
 
             # mingw-w64-toolchain group / base packages
             "mingw-w64-binutils":               default,
@@ -166,6 +169,17 @@ class Requirements:
             "mingw-w64-fftw":                   default,
             "mingw-w64-ladspa-sdk":             default,
             "mingw-w64-rubberband":             default,
+
+            # Jack audio / "not specific" but needed, better
+            "mingw-w64-eigen":                  default,
+            "mingw-w64-opus":                   default,
+            "mingw-w64-opusfile":               default,
+            "mingw-w64-portaudio":              default,
+            "mingw-w64-ffmpeg-minimal":         default,
+            "mingw-w64-gst-libav":              default,
+            "mingw-w64-gst-plugins-base":       default,
+
+
             
             
             # Not needed but listed as optional deps, optimal for a full build

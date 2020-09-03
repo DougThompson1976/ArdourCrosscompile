@@ -166,7 +166,7 @@ class SubprocessUtils:
     # Run the subprocess with or without a env / working directory
     def run(self, working_directory=None, env=None, shell=False):
 
-        self.main.utils.sprint(f"Popen SubprocessUtils with name [{self.name}]", "i")
+        self.main.utils.sprint(f"Run SubprocessUtils with name [{self.name}]", "i")
         
         # Copy the environment if nothing was changed and passed as argument
         if env is None:

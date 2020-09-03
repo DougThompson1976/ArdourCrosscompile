@@ -81,16 +81,13 @@ class Actions:
             mingw_pfx = "x86_64-w64-mingw32"
 
             self.main.utils.sprint("SET XARCH to x86_64", 'a')
-            self.main.utils.sed_replace(
-                ": ${XARCH=i686}",
-                ": ${XARCH=x86_64}",
-                self.main.directories.ardour + "/tools/x-win/compile.sh"
-            )
-            self.main.utils.sed_replace(
-                ": ${XARCH=i686}",
-                ": ${XARCH=x86_64}",
-                self.main.directories.ardour + "/tools/x-win/package.sh"
-            )
+
+            for file in ["/tools/x-win/compile.sh", "/tools/x-win/package.sh"]:
+                self.main.utils.sed_replace(
+                    ": ${XARCH=i686}",
+                    ": ${XARCH=x86_64}",
+                    self.main.directories.ardour + file
+                )
         else:
             mingw_pfx = "i686-w64-mingw32"
             raise NotImplementedError("32 bit compilation not configured")

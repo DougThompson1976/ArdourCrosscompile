@@ -37,13 +37,7 @@ class Requirements:
             "git":                              default,
             "waf":                              default,
             #"wine":                             default, # Some use different versions of wine
-            
-            "mingw-w64-libsndfile":             default,
-            "mingw-w64-libsamplerate":          default,
-            "mingw-w64-lz4":                    default,
-            "mingw-w64-gmp":                    default,
-            "mingw-w64-nettle":                 default,
-            "mingw-w64-libarchive":             default,
+           
 
             # Base devek
             "autoconf":                         default,
@@ -86,6 +80,7 @@ class Requirements:
             "mingw-w64-bzip2":                  default,
             "mingw-w64-zlib":                   default,
             "mingw-w64-meson":                  default,
+            "mingw-w64-make":                   default,
             "mingw-w64-cmake":                  default,
             "mingw-w64-wine":                   default,
             "mingw-w64-openssl":                default,
@@ -157,8 +152,22 @@ class Requirements:
             "mingw-w64-serd":                   default,
             "mingw-w64-sord":                   default,
             "mingw-w64-sratom":                 default,
+            "mingw-w64-libsndfile":             default,
+            "mingw-w64-libsamplerate":          default,
+            "mingw-w64-lz4":                    default,
+            "mingw-w64-gmp":                    default,
+            "mingw-w64-nettle":                 default,
+            "mingw-w64-libarchive":             default,
+            "mingw-w64-liblo":                  default,
+            "mingw-w64-cppunit":                default,
+            "mingw-w64-taglib":                 default,
+            "mingw-w64-vamp-plugin-sdk":        default,
+            "mingw-w64-fftw":                   default,
+            "mingw-w64-ladspa-sdk":             default,
+            "mingw-w64-rubberband":             default,
+            
 
-            # We need aubio as well
+            # We need aubio as well but that is done manually on actions
         }
 
     def check_installed(self):

@@ -36,11 +36,7 @@ class Actions:
             self.main.utils.sprint("CLONE_ARDOUR", 'a')
             self.main.download.git_clone("https://github.com/Ardour/ardour", self.main.directories.ardour)
         
-        # Pull latest commit (not really good because we change some files and be on a detached head mode, it's better just deleting the ardour repo source code and cloning again)
-        if PULL_ARDOUR:
-            self.main.utils.sprint("PULL_ARDOUR", 'a')
-            raise NotImplementedError
-            
+        # Pull latest commit, overwrite local made changes
         if RESET:
             self.main.utils.sprint("RESET", 'a')
             gitshell = self.main.get_subprocess_utils()
@@ -49,8 +45,9 @@ class Actions:
                 "git fetch --all && "
                 "git reset --hard origin/master"
             ))
-            sub.run(env = env, shell=True)
+            gitshell.run(shell=True)
     
+        exit()
         # Get installed packages
         self.main.pacman.get_installed_packages()
 

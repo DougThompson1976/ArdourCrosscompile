@@ -32,7 +32,7 @@ NOCONFIRM = True
 # Get source code
 
 CLONE_ARDOUR = True
-RESET = False  # Hard reset, overwrite local changes on SOURCE CODE
+RESET = True  # Hard reset, overwrite local changes on SOURCE CODE
 
 # Packages
 

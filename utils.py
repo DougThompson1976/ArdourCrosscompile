@@ -146,14 +146,14 @@ class SubprocessUtils:
 
     # Get the command from a string (for shell=True calls)
     def from_string(self, string):
-        self.main.utils.sprint(f"Creating subprocess from string \"{string}\"", 'i')
+        self.main.utils.sprint(f"Creating subprocess from string [{string}]", 'i')
         self.command = string
         self.name = string.split(" ")[0]
 
     # Run the subprocess with or without a env / working directory
     def run(self, working_directory=None, env=None, shell=False):
 
-        self.main.utils.sprint(f"Popen SubprocessUtils with name [self.name]", "i")
+        self.main.utils.sprint(f"Popen SubprocessUtils with name [{self.name}]", "i")
         
         # Copy the environment if nothing was changed and passed as argument
         if env is None:

@@ -199,7 +199,7 @@ class Requirements:
 
             # You can safely remove those (probably), just trying to get everything ardour checks
             "mingw-w64-clang-git":              default,
-            "mingw-w64-libwebsockets":          default,
+            # "mingw-w64-libwebsockets":          default, # broken PKGBUILD 
 
             # We need aubio as well but that is done manually on actions
         }

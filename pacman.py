@@ -73,7 +73,7 @@ class Requirements:
             "mingw-w64-headers":                default,
             "mingw-w64-winpthreads":            default,
 
-            # "Standard" mingw packages
+            # "Standard" / "isolated" mingw packages
             "mingw-w64-pkg-config":             default,
             "mingw-w64-environment":            default,
             "mingw-w64-configure":              default,
@@ -85,6 +85,7 @@ class Requirements:
             "mingw-w64-wine":                   default,
             "mingw-w64-openssl":                default,
             "mingw-w64-xz":                     default,
+            "mingw-w64-libxml2":                default,
 
             # Python
             "mingw-w64-libtre-git":             default,
@@ -166,6 +167,15 @@ class Requirements:
             "mingw-w64-ladspa-sdk":             default,
             "mingw-w64-rubberband":             default,
             
+            
+            # Not needed but listed as optional deps, optimal for a full build
+            
+            "mingw-w64-vulkan-headers":         default,
+            "mingw-w64-dbus":                   default,
+            "mingw-w64-postgresql":             default,
+            "mingw-w64-mariadb-connector-c":    default,
+            "mingw-w64-libusb":                 default,
+            "mingw-w64-pcre2":                  default,
 
             # We need aubio as well but that is done manually on actions
         }

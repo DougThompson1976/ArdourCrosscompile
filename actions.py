@@ -40,6 +40,16 @@ class Actions:
         if PULL_ARDOUR:
             self.main.utils.sprint("PULL_ARDOUR", 'a')
             raise NotImplementedError
+            
+        if RESET:
+            self.main.utils.sprint("RESET", 'a')
+            gitshell = self.main.get_subprocess_utils()
+            gitshell.from_string((
+                f"cd \"{self.main.directories.ardour}\" && "
+                "git fetch --all && "
+                "git reset --hard origin/master"
+            ))
+            sub.run(env = env, shell=True)
     
         # Get installed packages
         self.main.pacman.get_installed_packages()
@@ -73,6 +83,30 @@ class Actions:
             raise NotImplementedError("32 bit compilation not configured")
 
         
+        # Set audio backends we will compile
+        self.main.utils.sprint(f"SET AUDIO BACKENDS TO [{AUDIO_BACKENDS}]", 'a')
+        self.main.utils.sed_replace(
+            "--dist-target=mingw \\",
+            f"--dist-target=mingw \\\n    --with-backends={AUDIO_BACKENDS} \\",
+            self.main.directories.ardour + "/tools/x-win/compile.sh"
+        )
+
+        # Enable Windows VST
+        self.main.utils.sprint("ENABLE WINDOWS VST", 'a')
+        self.main.utils.sed_replace(
+            "--dist-target=mingw \\",
+            f"--dist-target=mingw \\\n	--windows-vst \\",
+            self.main.directories.ardour + "/tools/x-win/compile.sh"
+        )
+        
+        if OPTIMIZED:
+            self.main.utils.sprint("OPTIMIZED", 'a')
+            self.main.utils.sed_replace(
+                "--dist-target=mingw \\",
+                f"--dist-target=mingw \\\n	--optimize \\",
+                self.main.directories.ardour + "/tools/x-win/compile.sh"
+            )
+            
         pkgconfig = mingw_pfx + "-pkg-config"
         mingw_gcc = mingw_pfx + "-gcc"
         mingw_gpp = mingw_pfx + "-gpp"

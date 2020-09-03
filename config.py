@@ -32,7 +32,7 @@ NOCONFIRM = True
 # Get source code
 
 CLONE_ARDOUR = True
-PULL_ARDOUR = False
+RESET = False  # Hard reset, overwrite local changes on SOURCE CODE
 
 # Packages
 
@@ -51,6 +51,7 @@ FIX_FFTW_FFTWF_MAKE_PLANNER_THREAD_SAFE = True
 # 
 
 XARCH_X86_64 = True  # Compile for Windows 64 bit
+AUDIO_BACKENDS = "portaudio"
 OPTIMIZED = True  # Build a optimized executable of Ardour
 
 

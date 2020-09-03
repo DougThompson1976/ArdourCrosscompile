@@ -75,9 +75,6 @@ class Actions:
                 self.main.directories.ardour + "/libs/pbd/file_utils.cc"
             )
 
-        # mingw prefix
-        mingw_pfx = "i686-w64-mingw32"
-
         # Compile for x86_64 (64 bit)
         if XARCH_X86_64:
 
@@ -94,3 +91,9 @@ class Actions:
                 ": ${XARCH=x86_64}",
                 self.main.directories.ardour + "/tools/x-win/package.sh"
             )
+        else:
+            mingw_pfx = "i686-w64-mingw32"
+            raise NotImplementedError("32 bit compilation not configured")
+
+        
+        pkgconfig = mingw_pfx + "-pkg-config"

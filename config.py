@@ -22,9 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-# Compile options
 
-COMPILE_THREADS = 4
 
 # # #
 
@@ -47,3 +45,9 @@ FIX_FFTW_FFTWF_MAKE_PLANNER_THREAD_SAFE = True
 
 XARCH_X86_64 = True  # Compile for Windows 64 bit
 OPTIMIZED = True  # Build a optimized executable of Ardour
+
+
+# Compile options
+
+COMPILE_THREADS = 4
+COMPILE = True

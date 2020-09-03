@@ -28,29 +28,33 @@ class Requirements:
     def __init__(self, main):
         self.main = main
 
-        self.requirements = [
+        self.requirements = {
             # mingw-w64-toolchain group
-            "binutils",
-            "crt",
-            "gcc",
-            "headers",
-            "winpthreads",
+            "mingw-w64-binutils": {"from": "aur", "installed": False},
+            "mingw-w64-crt": {"from": "aur", "installed": False},
+            "mingw-w64-gcc": {"from": "aur", "installed": False},
+            "mingw-w64-headers": {"from": "aur", "installed": False},
+            "mingw-w64-winpthreads": {"from": "aur", "installed": False},
 
-            # Special ones that either AUR broken, need manual installing
-            "gtk2",
-            "aubio", # Aubio will always be missing here
-        ]
+            "mingw-w64-gtk2": {"from": "aur", "installed": False},
 
-        self.requirements = {f"mingw-w64-{name}": False for name in self.requirements}
+            # Custom
+            "mingw-w64-aubio": {"from": "custom", "installed": False}, # Aubio will always be missing here
+        }
 
     def check_installed(self):
         self.main.utils.sprint(f"Checking already installed packages from requirements", 'i')
 
         for pkgname in self.requirements.keys():
-            self.requirements[pkgname] = self.main.pacman.is_package_installed(pkgname)
+            is_installed = self.main.pacman.is_package_installed(pkgname)
+            self.requirements[pkgname]["installed"] = is_installed
 
         # Get number of installed packages and needed
-        installed = sum(self.requirements.values())
+        installed = 0
+
+        for item in self.requirements.values():
+            installed += item["installed"]
+
         needed = len(self.requirements.keys()) - installed
 
         self.main.utils.sprint(f"Status of packages: installed [{installed}], missing [{needed}]", 'i')

@@ -35,8 +35,34 @@ class Requirements:
         self.requirements = {
             # Just in case user doesn't have those
             "git":                              default,
-            "base-devel":                       default,
             #"wine":                             default, # Some use different versions of wine
+            
+            # Base devek
+            "autoconf":                         default,
+            "automake":                         default,
+            "binutils":                         default,
+            "bison":                            default,
+            "fakeroot":                         default,
+            "file":                             default,
+            "findutils":                        default,
+            "flex":                             default,
+            "gawk":                             default,
+            "gcc":                              default,
+            "gettext":                          default,
+            "grep":                             default,
+            "groff":                            default,
+            "gzip":                             default,
+            "libtool":                          default,
+            "m4":                               default,
+            "make":                             default,
+            "pacman":                           default,
+            "patch":                            default,
+            "pkgconf":                          default,
+            "sed":                              default,
+            "sudo":                             default,
+            "texinfo":                          default,
+            "which":                            default,
+
 
             # mingw-w64-toolchain group / base packages
             "mingw-w64-binutils":               default,
@@ -88,6 +114,7 @@ class Requirements:
             "mingw-w64-lzo":                    default,
             "mingw-w64-cairo-bootstrap":        default, # Finally we can install cairo
 
+            # For GTK 2
             "mingw-w64-atk":                    default,
             "mingw-w64-graphite":               default,
             "mingw-w64-harfbuzz":               default,
@@ -109,6 +136,9 @@ class Requirements:
 
             "mingw-w64-gtk2":                   default, # And gtk2
 
+            # Boost
+            "mingw-w64-boost":                  default,
+            
             # Packages Ardour need
             "mingw-w64-serd":                   default,
             "mingw-w64-sord":                   default,

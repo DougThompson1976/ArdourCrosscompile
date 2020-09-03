@@ -100,3 +100,28 @@ class Actions:
 
         
         pkgconfig = mingw_pfx + "-pkg-config"
+
+        # Configure CONCURRENCY
+        if COMPILE_THREADS:
+            self.main.utils.sed_replace(
+                r"./waf ${CONCURRENCY}",
+                f"./waf {COMPILE_THREADS}",
+                self.main.directories.ardour + "/tools/x-win/compile.sh"
+            )
+        
+
+        # Compile Ardour with their script
+        if COMPILE:
+            self.main.utils.sprint("COMPILE", 'a')
+            
+            # PKGCONFIG use mingw libs
+            env = self.main.utils.custom_env({
+                "PKGCONFIG": f"/usr/bin/{pkgconfig}"
+            })
+
+            sub = self.main.get_subprocess_utils()
+            sub.from_string((
+                "/usr/bin/bash"
+                f" \"{self.main.directories.ardour}tools/x-win/compile.sh\""
+            ))
+            sub.run(shell=True)

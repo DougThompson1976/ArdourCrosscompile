@@ -4,6 +4,10 @@ WIP, lots of steps to cross compile Ardour.
 
 This script will work best on a Arch Linux distribution, it can work on other based distros like Manjaro, however I offer no support for those.
 
+I'm guessing this will install at least 5 GB of MinGW dependencies and lots of packages, see `pacman.py` file for a complete list.
+
+Installing the dependencies is the longest and hardest part while compiling and bundling Ardour itself is pretty straightforward; it took me about 2 to 3 hours of total compile time for all `mingw-*` packages including optional ones on a mainstream CPU.
+
 ## CONSIDER SUPPORTING ARDOUR DEVELOPMENT, BUY THEIR PRODUCT OR A SUBSCRIPTION.
 
 #### Why Arch?

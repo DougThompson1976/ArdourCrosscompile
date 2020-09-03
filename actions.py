@@ -48,6 +48,12 @@ class Actions:
             self.main.utils.sprint("CHECK_NEEDED_PACKAGES", 'a')
             self.main.pacman.requirements.check_installed()
 
+        if INSTALL_AUR_PACKAGES:
+            self.main.utils.sprint("INSTALL_AUR_PACKAGES", 'a')
+            for package in self.main.pacman.requirements.requirements.keys():
+                if self.main.pacman.requirements.requirements[package]["from"] == "aur":
+                    self.main.pacman.install_package(package)
+
         # Fix undefined reference on mingw, things seem not to blow if we just return false
         if FIX_CREATE_HARD_LINK_A:
             self.main.utils.sprint("FIX_CREATE_HARD_LINK_A", 'a')

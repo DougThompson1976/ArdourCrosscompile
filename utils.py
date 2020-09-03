@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import neotermcolor
+import subprocess
 import shutil
 import sys
 import os
@@ -133,34 +134,26 @@ class Utils:
 
 
 # Python's subprocess utilities because I'm lazy remembering things
-class SubprocessUtils():
-
-    def __init__(self, name, utils, context):
-
-        debug_prefix = "[SubprocessUtils.__init__]"
-
-        self.name = name
-        self.utils = utils
-        self.context = context
-
-        print(debug_prefix, "Creating SubprocessUtils with name: [%s]" % name)
+class SubprocessUtils:
+    def __init__(self, main):
+        self.main = main
 
     # Get the commands from a list to call the subprocess
-    def from_list(self, list):
+    def from_list(self, cmd_list):
+        self.main.utils.sprint(f"Creating subprocess from list {cmd_list}", 'i')
+        self.command = cmd_list
+        self.name = cmd_list[0]
 
-        debug_prefix = "[SubprocessUtils.run]"
-
-        print(debug_prefix, "Getting command from list:")
-        print(debug_prefix, list)
-
-        self.command = list
+    # Get the command from a string (for shell=True calls)
+    def from_string(self, string):
+        self.main.utils.sprint(f"Creating subprocess from string \"{string}\"", 'i')
+        self.command = string
+        self.name = string.split(" ")[0]
 
     # Run the subprocess with or without a env / working directory
     def run(self, working_directory=None, env=None, shell=False):
 
-        debug_prefix = "[SubprocessUtils.run]"
-        
-        print(debug_prefix, "Popen SubprocessUtils with name [%s]" % self.name)
+        self.main.utils.sprint(f"Popen SubprocessUtils with name [self.name]", "i")
         
         # Copy the environment if nothing was changed and passed as argument
         if env is None:
@@ -168,54 +161,41 @@ class SubprocessUtils():
         
         # Runs the subprocess based on if we set or not a working_directory
         if working_directory == None:
-            self.process = subprocess.Popen(self.command, env=env, stdout=subprocess.PIPE, shell=shell)
+            self.process = subprocess.call(
+                self.command,
+                env=env,
+                shell=shell
+            )
         else:
-            self.process = subprocess.Popen(self.command, env=env, cwd=working_directory, stdout=subprocess.PIPE, shell=shell)
-
-    # Get the newlines from the subprocess
-    # This is used for communicating Dandere2x C++ with Python, simplifies having dealing with files
-    def realtime_output(self):
-        while True:
-            # Read next line
-            output = self.process.stdout.readline()
-
-            # If output is empty and process is not alive, quit
-            if output == '' and self.process.poll() is not None:
-                break
-            
-            # Else yield the decoded output as subprocess send bytes
-            if output:
-                yield output.strip().decode("utf-8")
+            self.process = subprocess.call(
+                self.command,
+                env=env,
+                cwd=working_directory,
+                shell=shell
+            )
 
     # Wait until the subprocess has finished
     def wait(self):
-
-        debug_prefix = "[SubprocessUtils.wait]"
-
-        print(debug_prefix, "Waiting SubprocessUtils with name [%s] to finish" % self.name)
-
+        self.main.utils.sprint(f"Waiting SubprocessUtils with name [{self.name}] to finish", "i")
         self.process.wait()
+        self.main.utils.sprint(f"SubprocessUtils [{self.name}] finished", "o")
 
     # Kill subprocess
     def terminate(self):
-
-        debug_prefix = "[SubprocessUtils.terminate]"
-
-        print(debug_prefix, "Terminating SubprocessUtils with name [%s]" % self.name)
-
+        self.main.utils.sprint(f"Terminating SubprocessUtils with name [{self.name}]", "w")
         self.process.terminate()
+        self.main.utils.sprint(f"Terminated subprocess", "o")
 
     # See if subprocess is still running
     def is_alive(self):
-
-        debug_prefix = "[SubprocessUtils.is_alive]"
 
         # Get the status of the subprocess
         status = self.process.poll()
 
         # None? alive
         if status == None:
+            self.main.utils.sprint(f"SubprocessUtils with name [{self.name}] is alive", "i")
             return True
         else:
-            print(debug_prefix, "SubprocessUtils with name [%s] is not alive" % self.name)
+            self.main.utils.sprint(f"SubprocessUtils with name [{self.name}] is not alive", "w")
             return False

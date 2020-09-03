@@ -23,20 +23,25 @@ SOFTWARE.
 """
 
 from directories import Directories
+from utils import SubprocessUtils
 from download import Download
 from actions import Actions
 from pacman import Pacman
 from utils import Utils
+import copy
 
 
 class Main:
     def __init__(self):
         self.utils = Utils(self)
+        self.subprocess_utils = SubprocessUtils(self)
         self.pacman = Pacman(self)
         self.directories = Directories(self)
         self.download = Download(self)
         self.actions = Actions(self)
 
-
         self.actions.run()
+
+    def get_subprocess_utils(self):
+        return copy.deepcopy(self.subprocess_utils)
 Main()

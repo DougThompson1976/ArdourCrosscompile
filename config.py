@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+# # # Package manager
+
+NOCONFIRM = True
 
 
 # # #
@@ -34,6 +37,7 @@ PULL_ARDOUR = False
 # Packages
 
 CHECK_NEEDED_PACKAGES = True
+INSTALL_AUR_PACKAGES = True
 
 # Fixes on Ardour scripts
 

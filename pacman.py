@@ -55,8 +55,20 @@ class Requirements:
             "mingw-w64-cmake":                  default,
             "mingw-w64-wine":                   default,
             "mingw-w64-openssl":                default,
+            "mingw-w64-xz":                     default,
+
+            # Python
+            "mingw-w64-libtre-git":             default,
+            "mingw-w64-libsystre":              default,
+            "mingw-w64-ncurses":                default,
+            "mingw-w64-tcl":                    default,
+            "mingw-w64-tk":                     default,
+            "mingw-w64-mpdecimal":              default,
+            "mingw-w64-sqlite":                 default,
+            "mingw-w64-python":                 default,
 
             # GTK 2 / needed by
+
             "mingw-w64-libiconv":               default,  # libiconv usually gets stuck so just run the script again if that happens
             "mingw-w64-libjpeg-turbo":          default,
             "mingw-w64-pdcurses":               default,
@@ -66,6 +78,7 @@ class Requirements:
             "mingw-w64-pixman":                 default,
             "mingw-w64-libffi":                 default,
             "mingw-w64-pcre":                   default,
+            "mingw-w64-readline":               default,
             "mingw-w64-termcap":                default,
             "mingw-w64-libunistring":           default,
             "mingw-w64-gettext":                default,
@@ -73,15 +86,37 @@ class Requirements:
             "mingw-w64-expat":                  default,
             "mingw-w64-fontconfig":             default,
             "mingw-w64-lzo":                    default,
-            "mingw-w64-readline":               default,
             "mingw-w64-cairo-bootstrap":        default, # Finally we can install cairo
 
-            
+            "mingw-w64-atk":                    default,
+            "mingw-w64-graphite":               default,
+            "mingw-w64-harfbuzz":               default,
+            "mingw-w64-fribidi":                default,
+            "mingw-w64-libdatrie":              default,
+            "mingw-w64-libthai":                default,
+            "mingw-w64-libtiff":                default,
+            "mingw-w64-lcms2":                  default,
+            "mingw-w64-libssh2":                default,
+            "mingw-w64-libidn2":                default,
+            "mingw-w64-libpsl":                 default,
+            "mingw-w64-curl":                   default,
+            "mingw-w64-openjpeg2":              default,
+            "mingw-w64-poppler":                default,
+            "mingw-w64-pango":                  default,
+            "mingw-w64-jasper":                 default,
+            "mingw-w64-gdk-pixbuf2":            default,
+            "mingw-w64-gtk2":                   default,
 
-            # "mingw-w64-gtk2":                   default,
+            "mingw-w64-gtk2":                   default, # And gtk2
+
+            # Packages Ardour need
+            "mingw-w64-serd":                   default,
+            "mingw-w64-sord":                   default,
 
             # Custom
-            "mingw-w64-aubio":       {"from": "custom", "installed": False, "skip": True}, # Aubio will always be missing here
+
+            # Aubio will always be missing here, if anybody wants to make a PKGBUILD for it and upload to the AUR..
+            "mingw-w64-aubio":       {"from": "custom", "installed": False, "skip": True}, 
         }
 
     def check_installed(self):

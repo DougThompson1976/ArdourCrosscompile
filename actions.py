@@ -206,7 +206,7 @@ class Actions:
             self.main.utils.sed_replace(
                 "fftwf_make_planner_thread_safe ();",
                 "void fftwf_make_planner_thread_safe ();",
-                self.main.directories.ardour + "/libs/pbd/file_utils.cc"
+                self.main.directories.ardour + "libs/ardour/globals.cc"
             )
 
 

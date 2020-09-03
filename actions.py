@@ -47,7 +47,6 @@ class Actions:
             ))
             gitshell.run(shell=True)
     
-        exit()
         # Get installed packages
         self.main.pacman.get_installed_packages()
 

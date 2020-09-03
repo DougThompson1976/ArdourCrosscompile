@@ -40,6 +40,10 @@ class Requirements:
             
             "mingw-w64-libsndfile":             default,
             "mingw-w64-libsamplerate":          default,
+            "mingw-w64-lz4":                    default,
+            "mingw-w64-gmp":                    default,
+            "mingw-w64-nettle":                 default,
+            "mingw-w64-libarchive":             default,
 
             # Base devek
             "autoconf":                         default,
@@ -136,9 +140,15 @@ class Requirements:
             "mingw-w64-pango":                  default,
             "mingw-w64-jasper":                 default,
             "mingw-w64-gdk-pixbuf2":            default,
-            "mingw-w64-gtk2":                   default,
 
             "mingw-w64-gtk2":                   default, # And gtk2
+
+            # GTK2 bindings
+            "mingw-w64-glibmm":                 default,
+            "mingw-w64-cairomm":                default,
+            "mingw-w64-pangomm":                default,
+            "mingw-w64-atkmm":                  default,
+            "mingw-w64-gtkmm":                  default,
 
             # Boost
             "mingw-w64-boost":                  default,
@@ -146,6 +156,7 @@ class Requirements:
             # Packages Ardour need
             "mingw-w64-serd":                   default,
             "mingw-w64-sord":                   default,
+            "mingw-w64-sratom":                 default,
 
             # We need aubio as well
         }

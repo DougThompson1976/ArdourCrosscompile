@@ -40,7 +40,7 @@ CHECK_NEEDED_PACKAGES = True
 INSTALL_AUR_PACKAGES = True
 
 # "Manual" installed package
-INSTALL_AUBIO = True
+INSTALL_AUBIO = False  # Their website expired certificates
 
 # Fixes on Ardour scripts
 

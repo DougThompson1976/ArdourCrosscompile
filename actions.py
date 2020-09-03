@@ -81,11 +81,13 @@ class Actions:
         
         # Set audio backends we will compile
         self.main.utils.sprint(f"SET AUDIO BACKENDS TO [{AUDIO_BACKENDS}]", 'a')
-        self.main.utils.sed_replace(
-            "--dist-target=mingw \\",
-            f"--dist-target=mingw \\\n    --with-backends={AUDIO_BACKENDS} \\",
-            self.main.directories.ardour + "/tools/x-win/compile.sh"
-        )
+        
+        for line in ["--with-backends=dummy,wavesaudio", "--with-backends=jack,dummy"]:
+            self.main.utils.sed_replace(
+                line,
+                f"--with-backends={AUDIO_BACKENDS}",
+                self.main.directories.ardour + "/tools/x-win/compile.sh"
+            )
 
         # Enable Windows VST
         self.main.utils.sprint("ENABLE WINDOWS VST", 'a')
@@ -128,7 +130,14 @@ class Actions:
             
             self.main.utils.sprint(f"Running command [{cmd}]", 'i')
             os.system(cmd)
-
+        else:
+            # Remove --with-backends=jack from ARDOURCFG
+            self.main.utils.sed_replace(
+                "--with-backends=jack,",
+                "--with-backends=",
+                self.main.directories.ardour + "/tools/x-win/compile.sh"
+            )
+            
 
         if INSTALL_AUBIO:
             self.main.utils.sprint("INSTALL_AUBIO", 'a')
@@ -173,7 +182,6 @@ class Actions:
                 # f"sudo cp \"{self.main.directories.workspace}aubio-0.4.8/build/src/libaubio.so\" /usr/{mingw_pfx}/"
 
 
-        exit()
         # Fix undefined reference on mingw, things seem not to blow if we just return false
         if FIX_CREATE_HARD_LINK_A:
             self.main.utils.sprint("FIX_CREATE_HARD_LINK_A", 'a')
@@ -205,8 +213,8 @@ class Actions:
         # Configure CONCURRENCY
         if COMPILE_THREADS:
             self.main.utils.sed_replace(
-                r"./waf ${CONCURRENCY}",
-                f"./waf {COMPILE_THREADS}",
+                "./waf ${CONCURRENCY}",
+                f"./waf build -j {COMPILE_THREADS}",
                 self.main.directories.ardour + "/tools/x-win/compile.sh"
             )
         

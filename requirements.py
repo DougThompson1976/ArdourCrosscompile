@@ -167,6 +167,7 @@ class Requirements:
             "mingw-w64-fftw":                   default,
             "mingw-w64-ladspa-sdk":             default,
             "mingw-w64-rubberband":             default,
+            "mingw-w64-lilv":                   default,
 
             # Jack audio / "not specific" but needed, better audio support
 
@@ -195,6 +196,10 @@ class Requirements:
             "mingw-w64-mariadb-connector-c":    default,
             "mingw-w64-libusb":                 default,
             "mingw-w64-pcre2":                  default,
+
+            # You can safely remove those (probably), just trying to get everything ardour checks
+            "mingw-w64-clang-git":              default,
+            "mingw-w64-libwebsockets":          default,
 
             # We need aubio as well but that is done manually on actions
         }

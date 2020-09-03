@@ -39,6 +39,9 @@ PULL_ARDOUR = False
 CHECK_NEEDED_PACKAGES = True
 INSTALL_AUR_PACKAGES = True
 
+# "Manual" installed package
+INSTALL_AUBIO = True
+
 # Fixes on Ardour scripts
 
 FIX_CREATE_HARD_LINK_A = True
@@ -55,3 +58,12 @@ OPTIMIZED = True  # Build a optimized executable of Ardour
 
 COMPILE_THREADS = 4
 COMPILE = True
+
+
+
+
+
+
+
+
+

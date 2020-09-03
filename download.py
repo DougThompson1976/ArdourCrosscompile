@@ -79,5 +79,10 @@ class Download:
         self.download_name = name
         self.start = time.time()
         self.main.utils.sprint(f"Get file from URL [{url}] saving to [{save}]", 'i')
+
+        if os.path.exists(save):
+            self.main.utils.sprint(f"Download file already exists, skipping", 'w')
+            return
+
         wget.download(url, save, bar=self.wget_progress_bar)
         print()

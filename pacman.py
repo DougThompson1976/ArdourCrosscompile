@@ -35,8 +35,12 @@ class Requirements:
         self.requirements = {
             # Just in case user doesn't have those
             "git":                              default,
+            "waf":                              default,
             #"wine":                             default, # Some use different versions of wine
             
+            "mingw-w64-libsndfile":             default,
+            "mingw-w64-libsamplerate":          default,
+
             # Base devek
             "autoconf":                         default,
             "automake":                         default,
@@ -138,15 +142,12 @@ class Requirements:
 
             # Boost
             "mingw-w64-boost":                  default,
-            
+
             # Packages Ardour need
             "mingw-w64-serd":                   default,
             "mingw-w64-sord":                   default,
 
-            # Custom
-
-            # Aubio will always be missing here, if anybody wants to make a PKGBUILD for it and upload to the AUR..
-            "mingw-w64-aubio":       {"from": "custom", "installed": False, "skip": True}, 
+            # We need aubio as well
         }
 
     def check_installed(self):

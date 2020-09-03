@@ -53,6 +53,53 @@ class Actions:
             for package in self.main.pacman.requirements.requirements.keys():
                 if self.main.pacman.requirements.requirements[package]["from"] == "aur":
                     self.main.pacman.install_package(package)
+        
+        # Compile for x86_64 (64 bit)
+        if XARCH_X86_64:
+
+            mingw_pfx = "x86_64-w64-mingw32"
+
+            self.main.utils.sprint("SET XARCH to x86_64", 'a')
+
+            for file in ["/tools/x-win/compile.sh", "/tools/x-win/package.sh"]:
+                self.main.utils.sed_replace(
+                    ": ${XARCH=i686}",
+                    ": ${XARCH=x86_64}",
+                    self.main.directories.ardour + file
+                )
+        else:
+            mingw_pfx = "i686-w64-mingw32"
+            raise NotImplementedError("32 bit compilation not configured")
+
+        
+        pkgconfig = mingw_pfx + "-pkg-config"
+        mingw_gcc = mingw_pfx + "-gcc"
+        mingw_gpp = mingw_pfx + "-gpp"
+        mingw_ld =  mingw_pfx + "-ld"
+
+
+        if INSTALL_AUBIO:
+            self.main.utils.sprint("INSTALL_AUBIO", 'a')
+
+            aubio_source_code = self.main.directories.workspace + "aubio-0.4.8.zip"
+            
+            self.main.download.wget(
+                url = "https://github.com/aubio/aubio/archive/0.4.8.zip",
+                save = aubio_source_code,
+                name = "Aubio Source Code",
+            )
+            self.main.utils.unzip(
+                aubio_source_code,
+                self.main.directories.workspace
+            )
+
+            os.system((
+                f"cd \"{self.main.directories.workspace}aubio-0.4.8 &&"
+                f"LD=/usr/bin/{mingw_ld} CC=/usr/bin/{mingw_gcc} PKGCONFIG=/usr/bin/{pkgconfig} waf configure &&"
+                "waf build &&"
+                # f"sudo cp \"{self.main.directories.workspace}aubio-0.4.8/build/src/libaubio.so\" /usr/{mingw_pfx}/"
+            ))
+
 
         # Fix undefined reference on mingw, things seem not to blow if we just return false
         if FIX_CREATE_HARD_LINK_A:
@@ -81,25 +128,6 @@ class Actions:
                 self.main.directories.ardour + "/libs/pbd/file_utils.cc"
             )
 
-        # Compile for x86_64 (64 bit)
-        if XARCH_X86_64:
-
-            mingw_pfx = "x86_64-w64-mingw32"
-
-            self.main.utils.sprint("SET XARCH to x86_64", 'a')
-
-            for file in ["/tools/x-win/compile.sh", "/tools/x-win/package.sh"]:
-                self.main.utils.sed_replace(
-                    ": ${XARCH=i686}",
-                    ": ${XARCH=x86_64}",
-                    self.main.directories.ardour + file
-                )
-        else:
-            mingw_pfx = "i686-w64-mingw32"
-            raise NotImplementedError("32 bit compilation not configured")
-
-        
-        pkgconfig = mingw_pfx + "-pkg-config"
 
         # Configure CONCURRENCY
         if COMPILE_THREADS:

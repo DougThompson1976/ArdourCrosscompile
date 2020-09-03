@@ -24,6 +24,7 @@ SOFTWARE.
 
 import neotermcolor
 import subprocess
+import zipfile
 import shutil
 import sys
 import os
@@ -131,6 +132,18 @@ class Utils:
         for env_var in env_vars.keys():
             env[env_var] = env_vars[env_var]
         return env
+
+    # Unzip a file and save to a dst dir
+    def unzip(self, src: str, dst: str) -> None:
+        
+        self.sprint(f"Extracting [{src}] zip to directory [{dst}]", 'i')
+
+        # Make dir if doesn't exist
+        self.mkdir_dne(dst)
+        
+        # Extract it
+        with zipfile.ZipFile(src, 'r') as f:
+            f.extractall(dst)
 
 
 # Python's subprocess utilities because I'm lazy remembering things

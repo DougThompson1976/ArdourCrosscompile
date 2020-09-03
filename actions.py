@@ -195,9 +195,9 @@ class Actions:
         if FIX_LD_FLAG_FFTW:
             self.main.utils.sprint("FIX_LD_FLAG_FFTW", 'a')
             self.main.utils.sed_replace(
-                "LDFLAGS=\"-L${PREFIX}/lib\" \\",
-                "LDFLAGS=\"-L${PREFIX}/lib -lfftw3 -lfftw3f\" \\",
-                self.main.directories.ardour + "/libs/pbd/file_utils.cc"
+                'LDFLAGS="-L${PREFIX}/lib"',
+                'LDFLAGS="-L${PREFIX}/lib -lfftw3 -lfftw3f"',
+                self.main.directories.ardour + "/tools/x-win/compile.sh"
             )
         
         # FFTW threads can't be imported with -lfftw3_threads

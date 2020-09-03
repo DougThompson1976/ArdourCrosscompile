@@ -151,5 +151,7 @@ class Actions:
             sub.from_string((
                 "/usr/bin/bash"
                 f" \"{self.main.directories.ardour}tools/x-win/compile.sh\""
-            ))
+                ),
+                env = env
+            )
             sub.run(shell=True)

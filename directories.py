@@ -30,10 +30,11 @@ class Directories:
 
         self.workspace = self.main.utils.ROOT + "workspace/"
         self.runtime = self.workspace + "runtime/"
-        self.ardour = self.workspace + "ardour/"
+        self.ardour_32 = self.workspace + "ardour32/"
+        self.ardour_64 = self.workspace + "ardour64/"
 
-        self.bundle_32 = self.workspace + "ardour_bundle_32bit/"
-        self.bundle_64 = self.workspace + "ardour_bundle_64bit/"
+        self.bundle_32 = self.workspace + "ardour_bundle_32/"
+        self.bundle_64 = self.workspace + "ardour_bundle_64/"
 
         self.lv2_bundled_32 = self.bundle_32 + "lv2/"
         self.lv2_bundled_64 = self.bundle_64 + "lv2/"

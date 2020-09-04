@@ -58,16 +58,17 @@ if INSTALL_MINGW_JACK:
 else:
     AUDIO_BACKENDS = "portaudio,dummy"
 
+CXX_11 = True
 OPTIMIZED = True  # Build a optimized executable of Ardour
 
 
 # Compile options
 
-COMPILE_THREADS = 8
+COMPILE_THREADS = 4
 COMPILE = True
 
 
-BUNDLE_TEST = False
+BUNDLE_TEST = True
 
 
 GET_X42_PLUGINS = True

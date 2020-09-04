@@ -33,22 +33,6 @@ class Actions:
         self.main = main
 
     def run(self):
-
-        # Clone the repository of ardour
-        if CLONE_ARDOUR:
-            self.main.utils.sprint("CLONE_ARDOUR", 'a')
-            self.main.download.git_clone("https://github.com/Ardour/ardour", self.main.directories.ardour)
-        
-        # Pull latest commit, overwrite local made changes
-        if RESET:
-            self.main.utils.sprint("RESET", 'a')
-            gitshell = self.main.get_subprocess_utils()
-            gitshell.from_string((
-                f"cd \"{self.main.directories.ardour}\" && "
-                "git fetch --all && "
-                "git reset --hard origin/master"
-            ))
-            gitshell.run(shell=True)
     
         # Get installed packages
         self.main.pacman.get_installed_packages()
@@ -71,6 +55,7 @@ class Actions:
             plugin_arch = "w64"
             bundle_directory = self.main.directories.bundle_64
             lv2_bundle_directory = self.main.directories.lv2_bundled_64
+            ardour_repo = self.main.directories.ardour_64
 
             self.main.utils.sprint("SET XARCH to x86_64", 'a')
 
@@ -78,7 +63,7 @@ class Actions:
                 self.main.utils.sed_replace(
                     ": ${XARCH=i686}",
                     ": ${XARCH=x86_64}",
-                    self.main.directories.ardour + file
+                    ardour_repo + file
                 )
         else:
             self.main.utils.sprint("SET XARCH to default i686", 'a')
@@ -87,7 +72,23 @@ class Actions:
             plugin_arch = "w32"
             bundle_directory = self.main.directories.bundle_32
             lv2_bundle_directory = self.main.directories.lv2_bundled_32
+            ardour_repo = self.main.directories.ardour_32
 
+        # Clone the repository of ardour
+        if CLONE_ARDOUR:
+            self.main.utils.sprint("CLONE_ARDOUR", 'a')
+            self.main.download.git_clone("https://github.com/Ardour/ardour", ardour_repo)
+        
+        # Pull latest commit, overwrite local made changes
+        if RESET:
+            self.main.utils.sprint("RESET", 'a')
+            gitshell = self.main.get_subprocess_utils()
+            gitshell.from_string((
+                f"cd \"{ardour_repo}\" && "
+                "git fetch --all && "
+                "git reset --hard origin/master"
+            ))
+            gitshell.run(shell=True)
         
         # Set audio backends we will compile
         self.main.utils.sprint(f"SET AUDIO BACKENDS TO [{AUDIO_BACKENDS}]", 'a')
@@ -96,7 +97,7 @@ class Actions:
             self.main.utils.sed_replace(
                 line,
                 f"--with-backends={AUDIO_BACKENDS}",
-                self.main.directories.ardour + "/tools/x-win/compile.sh"
+                ardour_repo + "/tools/x-win/compile.sh"
             )
 
         # Enable Windows VST
@@ -104,15 +105,25 @@ class Actions:
         self.main.utils.sed_replace(
             "--dist-target=mingw \\",
             f"--dist-target=mingw \\\n	--windows-vst \\",
-            self.main.directories.ardour + "/tools/x-win/compile.sh"
+            ardour_repo + "/tools/x-win/compile.sh"
         )
         
+        # Optimized build
         if OPTIMIZED:
             self.main.utils.sprint("OPTIMIZED", 'a')
             self.main.utils.sed_replace(
                 "--dist-target=mingw \\",
                 f"--dist-target=mingw \\\n	--optimize \\",
-                self.main.directories.ardour + "/tools/x-win/compile.sh"
+                ardour_repo + "/tools/x-win/compile.sh"
+            )
+        
+        # Optimized build
+        if CXX_11:
+            self.main.utils.sprint("OPTIMIZED", 'a')
+            self.main.utils.sed_replace(
+                "--dist-target=mingw \\",
+                f"--dist-target=mingw \\\n	--cxx11 \\",
+                ardour_repo + "/tools/x-win/compile.sh"
             )
             
         # Get mingw binaries filenames
@@ -145,7 +156,7 @@ class Actions:
             self.main.utils.sed_replace(
                 "--with-backends=jack,",
                 "--with-backends=",
-                self.main.directories.ardour + "/tools/x-win/compile.sh"
+                ardour_repo + "/tools/x-win/compile.sh"
             )
             
 
@@ -227,7 +238,7 @@ class Actions:
             self.main.utils.sed_replace(
                 "return CreateHardLinkA (new_path.c_str(), existing_file.c_str(), NULL);",
                 "return false;",
-                self.main.directories.ardour + "/libs/pbd/file_utils.cc"
+                ardour_repo + "/libs/pbd/file_utils.cc"
             )
 
         # Add to LDFLAGS
@@ -236,7 +247,7 @@ class Actions:
             self.main.utils.sed_replace(
                 'LDFLAGS="-L${PREFIX}/lib"',
                 'LDFLAGS="-L${PREFIX}/lib -lfftw3 -lfftw3f"',
-                self.main.directories.ardour + "/tools/x-win/compile.sh"
+                ardour_repo + "/tools/x-win/compile.sh"
             )
         
         # FFTW threads can't be imported with -lfftw3_threads
@@ -245,7 +256,7 @@ class Actions:
             self.main.utils.sed_replace(
                 "fftwf_make_planner_thread_safe ();",
                 "void fftwf_make_planner_thread_safe ();",
-                self.main.directories.ardour + "libs/ardour/globals.cc"
+                ardour_repo + "libs/ardour/globals.cc"
             )
 
 
@@ -254,7 +265,7 @@ class Actions:
             self.main.utils.sed_replace(
                 "./waf ${CONCURRENCY}",
                 f"./waf build -j {COMPILE_THREADS}",
-                self.main.directories.ardour + "/tools/x-win/compile.sh"
+                ardour_repo + "/tools/x-win/compile.sh"
             )
         
 
@@ -270,7 +281,7 @@ class Actions:
             sub = self.main.get_subprocess_utils()
             sub.from_string((
                 "/usr/bin/bash"
-                f" \"{self.main.directories.ardour}tools/x-win/compile.sh\""
+                f" \"{ardour_repo}tools/x-win/compile.sh\""
             ))
             sub.run(env = env, shell=True)
 
@@ -278,24 +289,14 @@ class Actions:
             self.main.utils.sprint("BUNDLE_TEST", 'a')
             self.main.utils.mkdir_dne(bundle_directory)
 
-            # Copy every .exe we created
-            src = f"{self.main.directories.ardour}build"
+            src = f"{ardour_repo}build"
             dst = bundle_directory
-            match = "*.exe"
-
-            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {dst}", 'i')
-
-            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, dst))
-
-
+            
             # Copy every dll we build
-            src = f"{self.main.directories.ardour}build"
-            match = "*.dll"
-
-            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {bundle_directory}", 'i')
-
-            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, bundle_directory))
-
+            # Copy every .exe we created
+            for match in ["*.exe", "*.dll", "*.rc"]:
+                self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {dst}", 'i')
+                os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, dst))
 
             # Copy mingw dlls
             src = f"/usr/{mingw_pfx}/bin"
@@ -323,7 +324,7 @@ class Actions:
             self.main.utils.sprint("GET_X42_PLUGINS", 'a')
             self.main.utils.sprint("DOWNLOADING PLUGINS ZIPS", 'w')
             
-            x42_plugins_zip = self.main.directories.workspace + "x42-plugins/"
+            x42_plugins_zip = self.main.directories.workspace + f"x42-plugins-{plugin_arch}/"
             self.main.utils.mkdir_dne(x42_plugins_zip)
 
             html = urllib.request.urlopen(x42)
@@ -345,7 +346,7 @@ class Actions:
             # Extract contents to Ardour bundle
             for file in os.listdir(x42_plugins_zip):
                 self.main.utils.unzip(
-                    f"{x42_plugins_zip}/{file}",
+                    f"{x42_plugins_zip}{file}",
                     lv2_bundle_directory,
                     mkdir_dne = False,
                 )
@@ -354,7 +355,7 @@ class Actions:
             self.main.utils.sprint("GET_HARRISON_PLUGINS", 'a')
             self.main.utils.sprint("DOWNLOADING PLUGINS ZIPS", 'w')
             
-            harrison_plugins_zip = self.main.directories.workspace + "harrison-plugins"
+            harrison_plugins_zip = self.main.directories.workspace + f"harrison-plugins-{plugin_arch}"
             self.main.utils.mkdir_dne(harrison_plugins_zip)
 
             self.main.download.wget(

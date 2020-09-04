@@ -1,4 +1,6 @@
 
+PKGBUILDS
+!PKGBUILDS/*/PKGBUILD
 workspace
 
 # Byte-compiled / optimized / DLL files

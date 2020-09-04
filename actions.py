@@ -136,8 +136,6 @@ class Actions:
         # Doesn't really work, TODO
         if INSTALL_MINGW_JACK:
 
-            raise RuntimeError("Mingw Jack is finicky, prefer not to")
-
             self.main.utils.sprint("INSTALL_MINGW_JACK", 'a')
             
             jack2_repo_path = self.main.directories.workspace + "jack_mingw"
@@ -145,8 +143,10 @@ class Actions:
 
             cmd = (
                 f"cd \"{jack2_repo_path}\" && "
-                f"IS_WINDOWS=true LD=/usr/bin/{mingw_ld} CC=/usr/bin/{mingw_gcc} CXX=/usr/bin/{mingw_gpp} PKGCONFIG=/usr/bin/{pkgconfig} ./waf configure && "
-                "./waf build"
+                f"IS_WINDOWS=true PREFIX=/usr/{mingw_pfx} LD=/usr/bin/{mingw_ld} CC=/usr/bin/{mingw_gcc} CXX=/usr/bin/{mingw_gpp} PKGCONFIG=/usr/bin/{pkgconfig}"
+                    " ./waf configure --platform=win32 && "
+                "./waf build && "
+                "./waf install"
             )
             
             self.main.utils.sprint(f"Running command [{cmd}]", 'i')
@@ -158,7 +158,6 @@ class Actions:
                 "--with-backends=",
                 ardour_repo + "/tools/x-win/compile.sh"
             )
-            
 
         if INSTALL_AUBIO:
             self.main.utils.sprint("INSTALL_AUBIO", 'a')

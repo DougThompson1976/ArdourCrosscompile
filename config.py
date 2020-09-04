@@ -63,13 +63,15 @@ OPTIMIZED = True  # Build a optimized executable of Ardour
 
 # Compile options
 
-COMPILE_THREADS = 4
+COMPILE_THREADS = 8
 COMPILE = True
 
 
+BUNDLE_TEST = False
 
 
-
+GET_X42_PLUGINS = True
+GET_HARRISON_PLUGINS = True
 
 
 

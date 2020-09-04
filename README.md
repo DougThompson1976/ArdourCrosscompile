@@ -1,7 +1,5 @@
 # Python script for cross compiling Ardour DAW from Arch Linux targeting Windows
 
-WIP, lots of steps to cross compile Ardour.
-
 This script will work best on a Arch Linux distribution, it can work on other based distros like Manjaro, however I offer no support for those.
 
 I'm guessing this will install at least 5 GB of MinGW dependencies and lots of packages, see `pacman.py` file for a complete list.
@@ -50,9 +48,15 @@ Most packages are from the mingw group and / or community / extra repositories (
 
 # Running / contributing / issues
 
-Please before compiling have `yay` installed and run `yay -Syu python` for upgrading / syncing the system and installing python.
+Please before compiling have `yay` installed and run 
 
-This script only uses native python modules / packages.
+- `yay -Syu python python-setuptools python-pip git`
+ 
+That is for upgrading / syncing the system and installing python, git, pip.
+
+Clone the repo, cd into it:
+
+- `pip install -r requirements.txt`
 
 Edit `config.py` to your needs, run `python main.py`, if you want to install some packages by hand (or all) see file `pacman.py`, Requirements class.
 

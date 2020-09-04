@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from bs4 import BeautifulSoup
+import urllib.request
 from config import *
 import os
 
@@ -76,7 +78,7 @@ class Actions:
                 )
         else:
             mingw_pfx = "i686-w64-mingw32"
-            raise NotImplementedError("32 bit compilation not configured")
+            raise NotImplementedError("32 bit compilation not configured, problems with vamp sdk mingw")
 
         
         # Set audio backends we will compile
@@ -220,7 +222,7 @@ class Actions:
         
 
         # Compile Ardour with their script
-        if COMPILE:
+        if not COMPILE:
             self.main.utils.sprint("COMPILE", 'a')
             
             # PKGCONFIG use mingw libs
@@ -234,3 +236,80 @@ class Actions:
                 f" \"{self.main.directories.ardour}tools/x-win/compile.sh\""
             ))
             sub.run(env = env, shell=True)
+
+        if BUNDLE_TEST:
+            self.main.utils.sprint("BUNDLE_TEST", 'a')
+            self.main.utils.mkdir_dne(self.main.directories.bundle_test)
+
+
+            # Copy every .exe we created
+            src = f"{self.main.directories.ardour}build"
+            dst = self.main.directories.bundle_test
+            match = "*.exe"
+
+            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {dst}", 'i')
+
+            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, dst))
+
+
+            # Copy every dll we build
+            src = f"{self.main.directories.ardour}build"
+            dst = self.main.directories.bundle_test
+            match = "*.dll"
+
+            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {dst}", 'i')
+
+            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, dst))
+
+
+            # Copy mingw dlls
+            src = f"/usr/{mingw_pfx}/bin"
+            dst = self.main.directories.bundle_test
+            match = "*.dll"
+
+            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {dst}", 'i')
+
+            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, dst))
+        
+
+        # Reading ardour/tools/x-win/package.sh I found how to "build" those urls
+        
+        harrison = "https://rsrc.harrisonconsoles.com/plugins/releases/public/harrison_lv2s-n.w64.zip"
+        x42 = "http://x42-plugins.com/x42/win/"
+
+
+        # mkdir dne path to bundled lv2 plugins
+        self.main.utils.mkdir_dne(self.main.directories.lv2_bundled)
+
+
+        if GET_X42_PLUGINS:
+            html = urllib.request.urlopen(x42)
+            soup = BeautifulSoup(html, "html.parser")
+
+            x42_plugins_zip = self.main.directories.workspace + "x42-plugins/"
+            self.main.utils.mkdir_dne(x42_plugins_zip)
+
+            for link in soup.findAll('a'):
+                href = link.get('href')
+                if "lv2-w64" in href:
+                    download_url = x42 + href
+
+                    self.main.download.wget(
+                        url = download_url,
+                        save = x42_plugins_zip + href,
+                        name = href,
+                    )
+        
+            # Extract contents to Ardour bundle
+            
+            for file in os.listdir(x42_plugins_zip):
+                self.main.utils.unzip(
+                    f"{x42_plugins_zip}/{file}",
+                    self.main.directories.lv2_bundled
+                )
+
+
+        # 7z a -mmt bundle.7z -m0=lzma2 -mx=9 ardour_bundle/
+
+
+            

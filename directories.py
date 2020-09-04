@@ -30,4 +30,6 @@ class Directories:
         self.runtime = self.workspace + "runtime/"
         self.ardour = self.workspace + "ardour/"
 
+        self.bundle_test = self.workspace + "ardour_bundle/"
+        self.lv2_bundled = self.bundle_test + "lv2/"
         # Runtime

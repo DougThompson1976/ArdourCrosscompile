@@ -283,11 +283,14 @@ class Actions:
 
 
         if GET_X42_PLUGINS:
-            html = urllib.request.urlopen(x42)
-            soup = BeautifulSoup(html, "html.parser")
-
+            self.main.utils.sprint("GET_X42_PLUGINS", 'a')
+            self.main.utils.sprint("DOWNLOADING PLUGINS ZIPS", 'w')
+            
             x42_plugins_zip = self.main.directories.workspace + "x42-plugins/"
             self.main.utils.mkdir_dne(x42_plugins_zip)
+
+            html = urllib.request.urlopen(x42)
+            soup = BeautifulSoup(html, "html.parser")
 
             for link in soup.findAll('a'):
                 href = link.get('href')
@@ -300,12 +303,14 @@ class Actions:
                         name = href,
                     )
         
+            self.main.utils.sprint("EXTRACTING PLUGINS ZIPS TO BUNDLE", 'a')
+
             # Extract contents to Ardour bundle
-            
             for file in os.listdir(x42_plugins_zip):
                 self.main.utils.unzip(
                     f"{x42_plugins_zip}/{file}",
-                    self.main.directories.lv2_bundled
+                    self.main.directories.lv2_bundled,
+                    mkdir_dne = False,
                 )
 
 

@@ -134,12 +134,13 @@ class Utils:
         return env
 
     # Unzip a file and save to a dst dir
-    def unzip(self, src: str, dst: str) -> None:
+    def unzip(self, src: str, dst: str, mkdir_dne=True) -> None:
         
         self.sprint(f"Extracting [{src}] zip to directory [{dst}]", 'i')
 
         # Make dir if doesn't exist
-        self.mkdir_dne(dst)
+        if mkdir_dne:
+            self.mkdir_dne(dst)
         
         # Extract it
         with zipfile.ZipFile(src, 'r') as f:

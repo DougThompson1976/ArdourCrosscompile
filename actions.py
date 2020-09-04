@@ -285,6 +285,91 @@ class Actions:
             sub.run(env = env, shell=True)
 
         if BUNDLE_TEST:
+            self.main.utils.sed_replace(
+                "cp $PREFIX/lib/suil-*/*.dll $ALIBDIR/suil/ || true",
+                "#TREMX# cp $PREFIX/lib/suil-*/*.dll $ALIBDIR/suil/ || true",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+            self.main.utils.sed_replace(
+                "cp /usr/${XPREFIX}/*/libgcc_s_seh-1.dll $DESTDIR/bin/",
+                "#TREMX# cp /usr/${XPREFIX}/*/libgcc_s_seh-1.dll $DESTDIR/bin/",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+            self.main.utils.sed_replace(
+                "cp /usr/${XPREFIX}/*/libstdc++-6.dll $DESTDIR/bin/",
+                "#TREMX# cp /usr/${XPREFIX}/*/libstdc++-6.dll $DESTDIR/bin/",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+
+
+            self.main.utils.sed_replace(
+                "cp $PREFIX/bin/*dll $DESTDIR/bin/",
+                "#TREMX# cp $PREFIX/bin/*dll $DESTDIR/bin/",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+
+            self.main.utils.sed_replace(
+                "cp $PREFIX/lib/*dll $DESTDIR/bin/",
+                "#TREMX# cp $PREFIX/lib/*dll $DESTDIR/bin/",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+
+            self.main.utils.sed_replace(
+                "cp $PREFIX/bin/libportaudio-2.xp $DESTDIR/bin/ || cp $PREFIX/bin/libportaudio-2.dll $DESTDIR/bin/libportaudio-2.xp",
+                "#TREMX# cp $PREFIX/bin/libportaudio-2.xp $DESTDIR/bin/ || cp $PREFIX/bin/libportaudio-2.dll $DESTDIR/bin/libportaudio-2.xp",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+
+
+
+            self.main.utils.sed_replace(
+                "cp /usr/lib/gcc/${XPREFIX}/*/libgcc_s_sjlj-1.dll $DESTDIR/bin/",
+                "#TREMX# cp /usr/lib/gcc/${XPREFIX}/*/libgcc_s_sjlj-1.dll $DESTDIR/bin/",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+            self.main.utils.sed_replace(
+                "cp /usr/lib/gcc/${XPREFIX}/*/libstdc++-6.dll $DESTDIR/bin/",
+                "#TREMX# cp /usr/lib/gcc/${XPREFIX}/*/libstdc++-6.dll $DESTDIR/bin/\n    echo \"Removing libstdc++-6.dll libstdc++-6.dll\"",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+
+
+            self.main.utils.sed_replace(
+                "cp -r $PREFIX/share/locale $DESTDIR/share/",
+                "#TREMX# cp -r $PREFIX/share/locale $DESTDIR/share/",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+
+            self.main.utils.sed_replace(
+                "### Mixbus plugins, etc",
+                "exit 1",
+                f"{ardour_repo}tools/x-win/package.sh",
+            )
+
+            # I don't understand their organization, this seems to help
+            if XARCH_X86_64:
+                suffix = "home/ardour/win-stack-w64"
+            else:
+                suffix = "home/ardour/win-stack-w32"
+
+            # PKGCONFIG use mingw libs
+            env = self.main.utils.custom_env({
+                "DESTDIR": bundle_directory,
+                "PREFIX": bundle_directory + suffix,
+                "NOVIDEOTOOLS": "1",
+                "TMPDIR": bundle_directory
+            })
+
+            sub = self.main.get_subprocess_utils()
+            sub.from_string((
+                "/usr/bin/bash"
+                f" \"{ardour_repo}tools/x-win/package.sh\""
+            ))
+            sub.run(env = env, shell=True)
+
+
+            
+            """
             self.main.utils.sprint("BUNDLE_TEST", 'a')
             self.main.utils.mkdir_dne(bundle_directory)
 
@@ -304,7 +389,7 @@ class Actions:
             self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {bundle_directory}", 'i')
 
             os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, bundle_directory))
-        
+            """
 
         # Reading ardour/tools/x-win/package.sh I found how to "build" those urls
         

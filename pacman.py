@@ -104,6 +104,9 @@ class Pacman:
             # --needed because we install some package groups like base-devel
             yay.from_string(' '.join(["yay", "-S", self.has_noconfirm(), "--needed", name]))
             yay.run(shell = True) # YES shell=True is "dangerous", but we are using a package manager, there is no easier way
-            
+
+        elif pkg_from in ["tremx_pkgbuild"]:
+            os.system(f"cd \"{self.main.directories.PKGBUILDS}{name}\" && makepkg -csi")
+
         # Update installed packages
         self.get_installed_packages()

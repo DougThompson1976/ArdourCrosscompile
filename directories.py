@@ -26,10 +26,15 @@ class Directories:
     def __init__(self, main):
         self.main = main
 
+        self.PKGBUILDS = self.main.utils.ROOT + "PKGBUILDS/"
+
         self.workspace = self.main.utils.ROOT + "workspace/"
         self.runtime = self.workspace + "runtime/"
         self.ardour = self.workspace + "ardour/"
 
-        self.bundle_test = self.workspace + "ardour_bundle/"
-        self.lv2_bundled = self.bundle_test + "lv2/"
+        self.bundle_32 = self.workspace + "ardour_bundle_32bit/"
+        self.bundle_64 = self.workspace + "ardour_bundle_64bit/"
+
+        self.lv2_bundled_32 = self.bundle_32 + "lv2/"
+        self.lv2_bundled_64 = self.bundle_64 + "lv2/"
         # Runtime

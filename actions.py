@@ -25,6 +25,7 @@ SOFTWARE.
 from bs4 import BeautifulSoup
 import urllib.request
 from config import *
+import shutil
 import os
 
 class Actions:
@@ -67,6 +68,9 @@ class Actions:
         if XARCH_X86_64:
 
             mingw_pfx = "x86_64-w64-mingw32"
+            plugin_arch = "w64"
+            bundle_directory = self.main.directories.bundle_64
+            lv2_bundle_directory = self.main.directories.lv2_bundled_64
 
             self.main.utils.sprint("SET XARCH to x86_64", 'a')
 
@@ -77,8 +81,12 @@ class Actions:
                     self.main.directories.ardour + file
                 )
         else:
+            self.main.utils.sprint("SET XARCH to default i686", 'a')
+
             mingw_pfx = "i686-w64-mingw32"
-            raise NotImplementedError("32 bit compilation not configured, problems with vamp sdk mingw")
+            plugin_arch = "w32"
+            bundle_directory = self.main.directories.bundle_32
+            lv2_bundle_directory = self.main.directories.lv2_bundled_32
 
         
         # Set audio backends we will compile
@@ -159,17 +167,19 @@ class Actions:
                 self.main.directories.workspace
             )
 
+            aubio_folder = self.main.directories.workspace + f"aubio-{version}/"
+
             # Need Python2 on this version of aubios
             self.main.utils.sed_replace(
                 "  ./waf", # We add trailing spaces as if we run the program again and re-overwrite
                 "  python2 ./waf",
-                self.main.directories.workspace + f"aubio-{version}/scripts/build_mingw"
+                f"{aubio_folder}/scripts/build_mingw"
             )
 
             self.main.utils.sed_replace(
                 "WAFCMD=python waf", # We add trailing spaces as if we run the program again and re-overwrite
                 "WAFCMD=python2 waf",
-                self.main.directories.workspace + f"aubio-{version}/Makefile"
+                f"{aubio_folder}/Makefile"
             )
 
             # Build aubio
@@ -181,8 +191,35 @@ class Actions:
             self.main.utils.sprint(f"Running command [{cmd}]", 'i')
             os.system(cmd)
 
-                # f"sudo cp \"{self.main.directories.workspace}aubio-0.4.8/build/src/libaubio.so\" /usr/{mingw_pfx}/"
+            # We compiled aubio and it gifts us two zips: "aubio-{version}-win32-ffmpeg.zip" and "aubio-{version}-win64-ffmpeg.zip"
 
+            for arch in ["32", "64"]:
+                self.main.utils.unzip(
+                    aubio_folder + f"aubio-{version}-win{arch}-ffmpeg.zip",
+                    aubio_folder,
+                )
+
+            aubio64 = aubio_folder + f"aubio-{version}-win64-ffmpeg"
+            aubio32 = aubio_folder + f"aubio-{version}-win32-ffmpeg"
+
+            # We copy the files to /usr/(mingw arch)/*
+
+            # 64 bit
+            sub = self.main.get_subprocess_utils()
+            sub.from_string((
+                f"sudo cp -var \"{aubio64}/.\" \"/usr/x86_64-w64-mingw32\""
+            ))
+            sub.run(shell=True)
+
+            # 32 bit
+            sub = self.main.get_subprocess_utils()
+            sub.from_string((
+                f"sudo cp -var \"{aubio32}/.\" \"/usr/i686-w64-mingw32\""
+            ))
+            sub.run(shell=True)
+
+
+            # f"sudo cp \"{self.main.directories.workspace}aubio-{version}/build/src/libaubio.so\" /usr/{mingw_pfx}/"
 
         # Fix undefined reference on mingw, things seem not to blow if we just return false
         if FIX_CREATE_HARD_LINK_A:
@@ -222,7 +259,7 @@ class Actions:
         
 
         # Compile Ardour with their script
-        if not COMPILE:
+        if COMPILE:
             self.main.utils.sprint("COMPILE", 'a')
             
             # PKGCONFIG use mingw libs
@@ -239,12 +276,11 @@ class Actions:
 
         if BUNDLE_TEST:
             self.main.utils.sprint("BUNDLE_TEST", 'a')
-            self.main.utils.mkdir_dne(self.main.directories.bundle_test)
-
+            self.main.utils.mkdir_dne(bundle_directory)
 
             # Copy every .exe we created
             src = f"{self.main.directories.ardour}build"
-            dst = self.main.directories.bundle_test
+            dst = bundle_directory
             match = "*.exe"
 
             self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {dst}", 'i')
@@ -254,34 +290,35 @@ class Actions:
 
             # Copy every dll we build
             src = f"{self.main.directories.ardour}build"
-            dst = self.main.directories.bundle_test
             match = "*.dll"
 
-            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {dst}", 'i')
+            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {bundle_directory}", 'i')
 
-            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, dst))
+            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, bundle_directory))
 
 
             # Copy mingw dlls
             src = f"/usr/{mingw_pfx}/bin"
-            dst = self.main.directories.bundle_test
             match = "*.dll"
 
-            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {dst}", 'i')
+            self.main.utils.sprint(f"Copy every file matching \"{match}\" from {src} to {bundle_directory}", 'i')
 
-            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, dst))
+            os.system("find \"%s\" -name '%s' -exec cp -v {} \"%s\" \\;" % (src, match, bundle_directory))
         
 
         # Reading ardour/tools/x-win/package.sh I found how to "build" those urls
         
-        harrison = "https://rsrc.harrisonconsoles.com/plugins/releases/public/harrison_lv2s-n.w64.zip"
+        harrison = f"https://rsrc.harrisonconsoles.com/plugins/releases/public/harrison_lv2s-n.{plugin_arch}.zip"
         x42 = "http://x42-plugins.com/x42/win/"
 
+        
 
         # mkdir dne path to bundled lv2 plugins
-        self.main.utils.mkdir_dne(self.main.directories.lv2_bundled)
+        self.main.utils.mkdir_dne(lv2_bundle_directory)
 
+        # # # Bundle plugins
 
+        # x42 plugins
         if GET_X42_PLUGINS:
             self.main.utils.sprint("GET_X42_PLUGINS", 'a')
             self.main.utils.sprint("DOWNLOADING PLUGINS ZIPS", 'w')
@@ -294,7 +331,7 @@ class Actions:
 
             for link in soup.findAll('a'):
                 href = link.get('href')
-                if "lv2-w64" in href:
+                if f"lv2-{plugin_arch}" in href:
                     download_url = x42 + href
 
                     self.main.download.wget(
@@ -309,11 +346,32 @@ class Actions:
             for file in os.listdir(x42_plugins_zip):
                 self.main.utils.unzip(
                     f"{x42_plugins_zip}/{file}",
-                    self.main.directories.lv2_bundled,
+                    lv2_bundle_directory,
                     mkdir_dne = False,
                 )
 
+        if GET_HARRISON_PLUGINS:
+            self.main.utils.sprint("GET_HARRISON_PLUGINS", 'a')
+            self.main.utils.sprint("DOWNLOADING PLUGINS ZIPS", 'w')
+            
+            harrison_plugins_zip = self.main.directories.workspace + "harrison-plugins"
+            self.main.utils.mkdir_dne(harrison_plugins_zip)
 
+            self.main.download.wget(
+                url = harrison,
+                save = harrison_plugins_zip + f"/harrison_lv2s-n.{plugin_arch}.zip",
+                name = href,
+            )
+
+            self.main.utils.sprint("EXTRACTING PLUGINS ZIPS TO BUNDLE", 'a')
+
+            # Extract contents to Ardour bundle
+            for file in os.listdir(harrison_plugins_zip):
+                self.main.utils.unzip(
+                    f"{harrison_plugins_zip}/{file}",
+                    lv2_bundle_directory,
+                    mkdir_dne = False,
+                )
         # 7z a -mmt bundle.7z -m0=lzma2 -mx=9 ardour_bundle/
 
 

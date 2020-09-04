@@ -28,6 +28,7 @@ class Requirements:
         self.main = main
 
         default = {"from": "aur", "installed": False, "skip": False}
+        tremx_pkgbuild = {"from": "tremx_pkgbuild", "installed": False, "skip": False}
 
         # List of requirements (in order of installation probably)
         self.requirements = {
@@ -185,8 +186,6 @@ class Requirements:
             "mingw-w64-gst-plugins-base":       default,
             "mingw-w64-gst-libav":              default,
 
-
-            
             
             # Not needed but listed as optional deps, optimal for a full build
             
@@ -202,6 +201,12 @@ class Requirements:
             # "mingw-w64-libwebsockets":          default, # broken PKGBUILD 
 
             # We need aubio as well but that is done manually on actions
+
+
+            # # # TREMESCHIN PKGBUILDS FOR 32 BIT # # #
+            "mingw-w32-vamp-sdk":               tremx_pkgbuild,
+            "mingw-w32-vamp-ladspa":            tremx_pkgbuild,
+            "mingw-w32-vamp-rubberband":        tremx_pkgbuild,
         }
 
         self.main.utils.sprint(f"Len of package dependencies: [{len(self.requirements.keys())}]", 'i')

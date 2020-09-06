@@ -33,7 +33,7 @@ class Actions:
         self.main = main
 
     def run(self):
-    
+
         # Get installed packages
         self.main.pacman.get_installed_packages()
 
@@ -47,7 +47,7 @@ class Actions:
             for package in self.main.pacman.requirements.requirements.keys():
                 if self.main.pacman.requirements.requirements[package]["from"] == "aur":
                     self.main.pacman.install_package(package)
-        
+
         # Compile for x86_64 (64 bit)
         if XARCH_X86_64:
             self.main.utils.sprint("SET XARCH to x86_64", 'a')
@@ -71,14 +71,6 @@ class Actions:
         if CLONE_ARDOUR:
             self.main.utils.sprint("CLONE_ARDOUR", 'a')
             self.main.download.git_clone("https://github.com/Ardour/ardour", ardour_repo)
-        
-        # Change the XARCH
-        for file in ["tools/x-win/compile.sh", "tools/x-win/package.sh"]:
-            self.main.utils.sed_replace(
-                ": ${XARCH=i686}",
-                ": ${XARCH=x86_64}",
-                ardour_repo + file
-            )
 
         # Pull latest commit, overwrite local made changes
         if RESET:
@@ -90,10 +82,18 @@ class Actions:
                 "git reset --hard origin/master"
             ))
             gitshell.run(shell=True)
-        
+
+        # Change the XARCH
+        for file in ["tools/x-win/compile.sh", "tools/x-win/package.sh"]:
+            self.main.utils.sed_replace(
+                ": ${XARCH=i686}",
+                ": ${XARCH=%s}" % XARCH,
+                ardour_repo + file
+            )
+
         # Set audio backends we will compile
         self.main.utils.sprint(f"SET AUDIO BACKENDS TO [{AUDIO_BACKENDS}]", 'a')
-        
+
         for line in ["--with-backends=dummy,wavesaudio", "--with-backends=jack,dummy"]:
             self.main.utils.sed_replace(
                 line,
@@ -108,7 +108,7 @@ class Actions:
             f"--dist-target=mingw \\\n	--windows-vst \\",
             ardour_repo + "/tools/x-win/compile.sh"
         )
-        
+
         # Optimized build
         if OPTIMIZED:
             self.main.utils.sprint("OPTIMIZED", 'a')
@@ -117,7 +117,7 @@ class Actions:
                 f"--dist-target=mingw \\\n	--optimize \\",
                 ardour_repo + "/tools/x-win/compile.sh"
             )
-        
+
         # Optimized build
         if CXX_11:
             self.main.utils.sprint("OPTIMIZED", 'a')
@@ -126,7 +126,7 @@ class Actions:
                 f"--dist-target=mingw \\\n	--cxx11 \\",
                 ardour_repo + "/tools/x-win/compile.sh"
             )
-            
+
         # Get mingw binaries filenames
         pkgconfig = mingw_pfx + "-pkg-config"
         mingw_gcc = mingw_pfx + "-gcc"
@@ -138,7 +138,7 @@ class Actions:
         if INSTALL_MINGW_JACK:
 
             self.main.utils.sprint("INSTALL_MINGW_JACK", 'a')
-            
+
             jack2_repo_path = self.main.directories.workspace + "jack_mingw"
             self.main.download.git_clone("https://github.com/jackaudio/jack2", jack2_repo_path)
 
@@ -149,7 +149,7 @@ class Actions:
                 "./waf build && "
                 "./waf install"
             )
-            
+
             self.main.utils.sprint(f"Running command [{cmd}]", 'i')
             os.system(cmd)
         else:
@@ -167,7 +167,7 @@ class Actions:
             version = "0.4.8"
 
             aubio_source_code = self.main.directories.workspace + f"aubio-{version}.zip"
-            
+
             self.main.download.wget(
                 url = f"https://github.com/aubio/aubio/archive/{version}.zip",
                 save = aubio_source_code,
@@ -249,7 +249,7 @@ class Actions:
                 'LDFLAGS="-L${PREFIX}/lib -lfftw3 -lfftw3f"',
                 ardour_repo + "/tools/x-win/compile.sh"
             )
-        
+
         # FFTW threads can't be imported with -lfftw3_threads
         if FIX_FFTW_FFTWF_MAKE_PLANNER_THREAD_SAFE:
             self.main.utils.sprint("FIX_FFTW", 'a')
@@ -267,12 +267,12 @@ class Actions:
                 f"./waf build -j {COMPILE_THREADS}",
                 ardour_repo + "/tools/x-win/compile.sh"
             )
-        
+
 
         # Compile Ardour with their script
         if COMPILE:
             self.main.utils.sprint("COMPILE", 'a')
-            
+
             # PKGCONFIG use mingw libs
             env = self.main.utils.custom_env({
                 "PKGCONFIG": f"/usr/bin/{pkgconfig}"
@@ -369,14 +369,14 @@ class Actions:
             sub.run(env = env, shell=True)
 
 
-            
+
             """
             self.main.utils.sprint("BUNDLE_TEST", 'a')
             self.main.utils.mkdir_dne(bundle_directory)
 
             src = f"{ardour_repo}build"
             dst = bundle_directory
-            
+
             # Copy every dll we build
             # Copy every .exe we created
             for match in ["*.exe", "*.dll", "*.rc"]:
@@ -393,11 +393,11 @@ class Actions:
             """
 
         # Reading ardour/tools/x-win/package.sh I found how to "build" those urls
-        
+
         harrison = f"https://rsrc.harrisonconsoles.com/plugins/releases/public/harrison_lv2s-n.{plugin_arch}.zip"
         x42 = "http://x42-plugins.com/x42/win/"
 
-        
+
 
         # mkdir dne path to bundled lv2 plugins
         self.main.utils.mkdir_dne(lv2_bundle_directory)
@@ -408,7 +408,7 @@ class Actions:
         if GET_X42_PLUGINS:
             self.main.utils.sprint("GET_X42_PLUGINS", 'a')
             self.main.utils.sprint("DOWNLOADING PLUGINS ZIPS", 'w')
-            
+
             x42_plugins_zip = self.main.directories.workspace + f"x42-plugins-{plugin_arch}/"
             self.main.utils.mkdir_dne(x42_plugins_zip)
 
@@ -425,7 +425,7 @@ class Actions:
                         save = x42_plugins_zip + href,
                         name = href,
                     )
-        
+
             self.main.utils.sprint("EXTRACTING PLUGINS ZIPS TO BUNDLE", 'a')
 
             # Extract contents to Ardour bundle
@@ -439,7 +439,7 @@ class Actions:
         if GET_HARRISON_PLUGINS:
             self.main.utils.sprint("GET_HARRISON_PLUGINS", 'a')
             self.main.utils.sprint("DOWNLOADING PLUGINS ZIPS", 'w')
-            
+
             harrison_plugins_zip = self.main.directories.workspace + f"harrison-plugins-{plugin_arch}"
             self.main.utils.mkdir_dne(harrison_plugins_zip)
 
@@ -459,6 +459,3 @@ class Actions:
                     mkdir_dne = False,
                 )
         # 7z a -mmt bundle.7z -m0=lzma2 -mx=9 ardour_bundle/
-
-
-            

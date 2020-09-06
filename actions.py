@@ -50,24 +50,17 @@ class Actions:
         
         # Compile for x86_64 (64 bit)
         if XARCH_X86_64:
-
+            self.main.utils.sprint("SET XARCH to x86_64", 'a')
+            XARCH = "x86_64"
             mingw_pfx = "x86_64-w64-mingw32"
             plugin_arch = "w64"
             bundle_directory = self.main.directories.bundle_64
             lv2_bundle_directory = self.main.directories.lv2_bundled_64
             ardour_repo = self.main.directories.ardour_64
 
-            self.main.utils.sprint("SET XARCH to x86_64", 'a')
-
-            for file in ["/tools/x-win/compile.sh", "/tools/x-win/package.sh"]:
-                self.main.utils.sed_replace(
-                    ": ${XARCH=i686}",
-                    ": ${XARCH=x86_64}",
-                    ardour_repo + file
-                )
         else:
-            self.main.utils.sprint("SET XARCH to default i686", 'a')
-
+            self.main.utils.sprint("SET XARCH to i686", 'a')
+            XARCH = "i686"
             mingw_pfx = "i686-w64-mingw32"
             plugin_arch = "w32"
             bundle_directory = self.main.directories.bundle_32
@@ -79,6 +72,14 @@ class Actions:
             self.main.utils.sprint("CLONE_ARDOUR", 'a')
             self.main.download.git_clone("https://github.com/Ardour/ardour", ardour_repo)
         
+        # Change the XARCH
+        for file in ["tools/x-win/compile.sh", "tools/x-win/package.sh"]:
+            self.main.utils.sed_replace(
+                ": ${XARCH=i686}",
+                ": ${XARCH=x86_64}",
+                ardour_repo + file
+            )
+
         # Pull latest commit, overwrite local made changes
         if RESET:
             self.main.utils.sprint("RESET", 'a')

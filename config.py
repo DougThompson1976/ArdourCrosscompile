@@ -49,9 +49,9 @@ FIX_CREATE_HARD_LINK_A = True
 FIX_LD_FLAG_FFTW = True
 FIX_FFTW_FFTWF_MAKE_PLANNER_THREAD_SAFE = True
 
-# 
+#
 
-XARCH_X86_64 = False  # Compile for Windows 64 bit, 32 bit if False
+XARCH_X86_64 = True  # Compile for Windows 64 bit, 32 bit if False
 
 if INSTALL_MINGW_JACK:
     AUDIO_BACKENDS = "portaudio,jack,dummy"
@@ -64,7 +64,7 @@ OPTIMIZED = True  # Build a optimized executable of Ardour
 
 # Compile options
 
-COMPILE_THREADS = 4
+COMPILE_THREADS = 6
 COMPILE = True
 
 
@@ -73,7 +73,3 @@ BUNDLE_TEST = True
 
 GET_X42_PLUGINS = True
 GET_HARRISON_PLUGINS = True
-
-
-
-

@@ -51,7 +51,7 @@ FIX_FFTW_FFTWF_MAKE_PLANNER_THREAD_SAFE = True
 
 #
 
-XARCH_X86_64 = True  # Compile for Windows 64 bit, 32 bit if False
+XARCH_X86_64 = True  # Compile for Windows 64 bit, 32 bit if False, let it True, been a while I don't maintain this project
 
 if INSTALL_MINGW_JACK:
     AUDIO_BACKENDS = "portaudio,jack,dummy"

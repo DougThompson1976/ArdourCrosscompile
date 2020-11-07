@@ -44,9 +44,20 @@ class Actions:
 
         if INSTALL_AUR_PACKAGES:
             self.main.utils.sprint("INSTALL_AUR_PACKAGES", 'a')
+
+            # If we run on single go mode, gotta concatenate every name of package for installing
+            single_install_packages = ""
+
             for package in self.main.pacman.requirements.requirements.keys():
                 if self.main.pacman.requirements.requirements[package]["from"] == "aur":
-                    self.main.pacman.install_package(package)
+                    if "onego" in self.main.flags:
+                        single_install_packages += f"{package} "
+                    else:
+                        self.main.pacman.install_package(package)
+            
+            # Install all at once
+            if "onego" in self.main.flags:
+                self.main.pacman.install_package(single_install_packages)
 
         # Compile for x86_64 (64 bit)
         if XARCH_X86_64:

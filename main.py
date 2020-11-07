@@ -29,10 +29,52 @@ from actions import Actions
 from pacman import Pacman
 from utils import Utils
 import copy
+import sys
 
 
 class Main:
-    def __init__(self):
+    """
+    kwargs: {
+        argv: expected sys.argv
+            Tries breaking into arguments of flags and key flags
+            flags are just texts like python script.py flag1 flag2 --flag3
+            key flags have equal sign python script.py this=that --other_flag=that-one
+            Not the best solution and doesn't work for spacer, easier for me to format
+
+            flags:
+                "wsl": Assume this is running on WSL Arch, changes one dependency (fakeroot -> fakeroot-tcp)
+                "onego": Calls yay for installing ALL packages at once listed on requirements
+    }
+    """
+    def __init__(self, **kwargs):
+        debug_prefix = "[Main.__init__]"
+
+        # Argv from shell
+        self.argv = kwargs["argv"]
+
+        # Empty list of flags and kflags
+        self.flags = []
+        self.kflags = {}
+
+        if self.argv is not None:
+
+            # Iterate in all args
+            for arg in self.argv[1:]:
+                
+                # Is a kwarg
+                if "=" in arg:
+                    arg = arg.split("=")
+                    self.kflags[arg[0]] = arg[1]
+
+                # Is a flag
+                else:
+                    self.flags.append(arg)
+        
+        # Print user flags from the terminal
+        print(debug_prefix, "Flags are:", self.flags)
+        print(debug_prefix, "Keyword flags are:", self.kflags)
+
+        # Create classes
         self.utils = Utils(self)
         self.subprocess_utils = SubprocessUtils(self)
         self.pacman = Pacman(self)
@@ -40,8 +82,10 @@ class Main:
         self.download = Download(self)
         self.actions = Actions(self)
 
+        # Runs every action
         self.actions.run()
 
     def get_subprocess_utils(self):
         return copy.deepcopy(self.subprocess_utils)
-Main()
+
+Main(argv = sys.argv)

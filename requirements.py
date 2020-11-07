@@ -27,8 +27,19 @@ class Requirements:
     def __init__(self, main):
         self.main = main
 
+        debug_prefix = "[Requirements.__init__]"
+
         default = {"from": "aur", "installed": False, "skip": False}
         tremx_pkgbuild = {"from": "tremx_pkgbuild", "installed": False, "skip": False}
+
+        # We're running on WSL so we use fakeroot-tcp not arch's fakeroot
+        if "wsl" in self.main.flags:
+            fakeroot_dep = "fakeroot-tcp"
+            print(debug_prefix, f"RUNNING ON WSL, FAKEROOT DEP IS [{fakeroot_dep}]")
+        else:
+            # Default Arch fakeroot
+            fakeroot_dep = "fakeroot"
+            print(debug_prefix, f"NOT RUNNING ON WSL, FAKEROOT DEP IS [{fakeroot_dep}]")
 
         # List of requirements (in order of installation probably)
         self.requirements = {
@@ -43,7 +54,7 @@ class Requirements:
             "automake":                         default,
             "binutils":                         default,
             "bison":                            default,
-            "fakeroot":                         default,
+            "fakeroot_dep":                     default,
             "file":                             default,
             "findutils":                        default,
             "flex":                             default,
@@ -204,9 +215,9 @@ class Requirements:
 
 
             # # # TREMESCHIN PKGBUILDS FOR 32 BIT # # #
-            "mingw-w32-vamp-sdk":               tremx_pkgbuild,
-            "mingw-w32-vamp-ladspa":            tremx_pkgbuild,
-            "mingw-w32-vamp-rubberband":        tremx_pkgbuild,
+            # "mingw-w32-vamp-sdk":               tremx_pkgbuild,
+            # "mingw-w32-vamp-ladspa":            tremx_pkgbuild,
+            # "mingw-w32-vamp-rubberband":        tremx_pkgbuild,
         }
 
         self.main.utils.sprint(f"Len of package dependencies: [{len(self.requirements.keys())}]", 'i')

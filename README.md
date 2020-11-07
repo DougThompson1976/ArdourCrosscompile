@@ -8,6 +8,16 @@ Installing the dependencies is the longest and hardest part while compiling and 
 
 ## CONSIDER SUPPORTING ARDOUR DEVELOPMENT, BUY THEIR PRODUCT OR A SUBSCRIPTION.
 
+# Running
+
+Clone repo with git or by downloading its source, run `python main.py`, you can pass a few flags into this script:
+
+- `wsl`: Tell the script we're running on Arch Linux under a WSL, changes `fakeroot` dep to `fakeroot-tcp`
+
+- `onego`: Calls for installing every package listed on `requirements.py` in a single yay call
+
+So for WSL and onego would be `python main.py onego wsl`
+
 #### Why Arch?
 
 Out of Ubuntu, Fedora, OpenSUSE and Arch Linux, I was only successful cross compiling on Arch.

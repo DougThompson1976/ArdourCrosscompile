@@ -25,6 +25,7 @@ SOFTWARE.
 from requirements import Requirements
 from config import *
 import subprocess
+import os
 
 
 class Pacman:
@@ -80,7 +81,12 @@ class Pacman:
             return
             
         # Get Requirements info
-        req_info = self.requirements.requirements[name]
+        try:
+            req_info = self.requirements.requirements[name]
+        except KeyError:
+            # onego mode?
+            req_info = {"skip": False, "from": "onego"}
+            pass
 
         # Do we want to skip the package?
         skip = req_info.get("skip", None)
@@ -99,7 +105,7 @@ class Pacman:
         self.main.utils.sprint(f"Package is from {pkg_from}", 'i')
 
         # Just for being safe
-        if pkg_from in ["aur", "community", "extra"]:
+        if pkg_from in ["aur", "community", "extra", "onego"]:
             yay = self.main.get_subprocess_utils()
             # --needed because we install some package groups like base-devel
             yay.from_string(' '.join(["yay", "-S", self.has_noconfirm(), "--needed", name]))

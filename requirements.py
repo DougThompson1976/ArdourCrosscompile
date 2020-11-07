@@ -54,7 +54,7 @@ class Requirements:
             "automake":                         default,
             "binutils":                         default,
             "bison":                            default,
-            "fakeroot_dep":                     default,
+            fakeroot_dep:                       default,
             "file":                             default,
             "findutils":                        default,
             "flex":                             default,

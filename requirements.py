@@ -115,7 +115,7 @@ class Requirements:
             "mingw-w64-libiconv":               default,  # libiconv usually gets stuck so just run the script again if that happens
             "mingw-w64-libjpeg-turbo":          default,
             "mingw-w64-pdcurses":               default,
-            "mingw-w64-freetype2-bootstrap":    default,
+            "mingw-w64-freetype2":              default,
             # Cairo
             "mingw-w64-libpng":                 default,
             "mingw-w64-pixman":                 default,
@@ -129,7 +129,8 @@ class Requirements:
             "mingw-w64-expat":                  default,
             "mingw-w64-fontconfig":             default,
             "mingw-w64-lzo":                    default,
-            "mingw-w64-cairo-bootstrap":        default, # Finally we can install cairo
+            # "mingw-w64-cairo-bootstrap":        default, # Finally we can install cairo
+            "mingw-w64-cairo":                  default, 
 
             # For GTK 2
             "mingw-w64-atk":                    default,

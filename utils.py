@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from pyunpack import Archive
 import neotermcolor
 import subprocess
 import zipfile
@@ -145,6 +146,11 @@ class Utils:
         # Extract it
         with zipfile.ZipFile(src, 'r') as f:
             f.extractall(dst)
+        
+    # Extract a compressed file (more generic)
+    def extract_file(self, src, dst):
+        self.sprint(f"Extracting [{src}] zip to directory [{dst}]", 'i')
+        Archive(src).extractall(dst)
 
 
 # Python's subprocess utilities because I'm lazy remembering things

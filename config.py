@@ -42,6 +42,7 @@ INSTALL_AUR_PACKAGES = True
 # "Manual" installed package
 INSTALL_MINGW_JACK = True
 INSTALL_AUBIO = True  # Their website expired certificates
+INSTALL_DRMINGW = True
 
 # Fixes on Ardour scripts
 

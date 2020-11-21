@@ -243,6 +243,41 @@ class Actions:
 
             # f"sudo cp \"{self.main.directories.workspace}aubio-{version}/build/src/libaubio.so\" /usr/{mingw_pfx}/"
 
+        if INSTALL_DRMINGW:
+            self.main.utils.sprint("INSTALL_DRMINGW", 'a')
+
+            # This was the latest version I could compile successfully
+            version = "0.9.2"
+
+            if XARCH_X86_64:
+                arch = "win64"
+                extract_to = "/usr/x86_64-w64-mingw32"
+            else:
+                arch = "win32"
+                extract_to = "/usr/i686-w64-mingw32"
+
+            drmingw_zip = f"drmingw-{version}-{arch}.7z"
+            drmingw = self.main.directories.workspace + drmingw_zip
+
+            self.main.download.wget(
+                url = f"https://github.com/jrfonseca/drmingw/releases/download/{version}/drmingw-{version}-win64.7z",
+                save = drmingw,
+                name = "Aubio Source Code",
+            )
+            self.main.utils.extract_file(
+                drmingw,
+                self.main.directories.workspace
+            )
+
+            drmingw_folder = self.main.directories.workspace + f"drmingw-{version}-{arch}"
+            
+            sub = self.main.get_subprocess_utils()
+            sub.from_string((
+                f"sudo cp -var \"{drmingw_folder}/.\" \"{extract_to}\""
+            ))
+            sub.run(shell=True)
+
+
         # Fix undefined reference on mingw, things seem not to blow if we just return false
         if FIX_CREATE_HARD_LINK_A:
             self.main.utils.sprint("FIX_CREATE_HARD_LINK_A", 'a')

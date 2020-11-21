@@ -40,7 +40,7 @@ CHECK_NEEDED_PACKAGES = True
 INSTALL_AUR_PACKAGES = True
 
 # "Manual" installed package
-INSTALL_MINGW_JACK = True
+INSTALL_MINGW_JACK = False
 INSTALL_AUBIO = True  # Their website expired certificates
 INSTALL_DRMINGW = True
 

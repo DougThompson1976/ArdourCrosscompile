@@ -129,9 +129,9 @@ class Actions:
                 ardour_repo + "/tools/x-win/compile.sh"
             )
 
-        # Optimized build
+        # Use CXX 11
         if CXX_11:
-            self.main.utils.sprint("OPTIMIZED", 'a')
+            self.main.utils.sprint("CXX_11", 'a')
             self.main.utils.sed_replace(
                 "--dist-target=mingw \\",
                 f"--dist-target=mingw \\\n	--cxx11 \\",
@@ -476,7 +476,7 @@ class Actions:
 
             # Extract contents to Ardour bundle
             for file in os.listdir(x42_plugins_zip):
-                self.main.utils.unzip(
+                self.main.utils.extract_file(
                     f"{x42_plugins_zip}{file}",
                     lv2_bundle_directory,
                     mkdir_dne = False,
@@ -499,7 +499,7 @@ class Actions:
 
             # Extract contents to Ardour bundle
             for file in os.listdir(harrison_plugins_zip):
-                self.main.utils.unzip(
+                self.main.utils.extract_file(
                     f"{harrison_plugins_zip}/{file}",
                     lv2_bundle_directory,
                     mkdir_dne = False,
